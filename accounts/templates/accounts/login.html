@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white w-full max-w-sm p-6 rounded-lg shadow-md">
+    
+    <h2 class="text-2xl font-semibold text-center mb-6">Login</h2>
+
+    {% for message in messages %}
+    <p class="text-red-600">{{message}}</p>
+    {% endfor %}
+
+    <form class="space-y-4" method="post">
+      {% csrf_token %}
+      <input 
+        type="text" 
+        placeholder="Username"
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        required
+        name="username"
+      />
+
+      <div class="relative">
+        <input 
+          type="password" 
+          placeholder="Password"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+          name="password"
+          id="password-field"
+        />
+        <i id="toggle-icon" onclick="togglePassword()" class="fa fa-eye absolute top-3 right-3" aria-hidden="true"></i>
+
+
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <input type="checkbox" id="remember" name="remember-me" class="w-4 h-4">
+        <label for="remember" class="text-sm text-gray-600">Remember me</label>
+      </div>
+
+      <button 
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+      >
+        Sign In
+      </button>
+
+    </form>
+
+    <p class="text-center text-xs text-gray-400 mt-4">
+      Simple Login Page
+    </p>
+
+  </div>
+
+
+  <script>
+    function togglePassword(){
+      const passwordField = document.getElementById("password-field")
+      const toggleIcon = document.getElementById("toggle-icon")
+
+      if (passwordField.type == "password"){
+        passwordField.type = "text"
+        toggleIcon.classList.remove("fa-eye")
+        toggleIcon.classList.add("fa-eye-slash")
+      }else{
+        passwordField.type = "password"
+        toggleIcon.classList.remove("fa-eye-slash")
+        toggleIcon.classList.add("fa-eye")
+      }
+      
+    }
+
+  </script>
+
+</body>
+</html>
