@@ -9,7 +9,7 @@ class CustomUserAdmin(UserAdmin):
     model = User
     
     # # Optional: Update list_display to show new fields in the user list
-    # list_display = ('username', 'email','role', 'is_staff')
+    list_display = ('username', 'email', 'role', 'is_staff')
 
     # Extend the standard fieldsets to include new fields for editing
     fieldsets = UserAdmin.fieldsets + (
