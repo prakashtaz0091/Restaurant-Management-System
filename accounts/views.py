@@ -7,12 +7,15 @@ def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
+        remember_me = request.POST.get("remember-me")
         
         user = authenticate(request, username=username, password=password)
         # print(user)
         if user is not None:
             login(request, user)
             messages.success(request, "Login successful")
+            if remember_me is None:
+                request.session.set_expiry(0)
             return redirect("tables_view_url")
         else:
             messages.error(request, "Invalid credentials")
