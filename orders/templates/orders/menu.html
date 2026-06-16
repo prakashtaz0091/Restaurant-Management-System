@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100">
+    <div class="max-w-7xl mx-auto p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Menu -->
+            <div>
+                <h1 class="text-2xl font-bold mb-4">Menu</h1>
+
+                {% for category in categories %}
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <h2 class="font-bold text-lg mb-3 border-b pb-2">
+                        {{ category }}
+                    </h2>
+
+                    <div class="grid gap-2">
+                        {% for item in category.items.all %}
+                        <div
+                            class="menu-item cursor-pointer bg-orange-100 hover:bg-orange-200 rounded-lg p-4 transition"
+                            data-item-id="{{ item.id }}"
+                            data-item-name="{{ item.name }}"
+                            data-item-price="{{ item.price }}"
+                        >
+                            <div class="flex justify-between">
+                                <span class="font-medium">{{ item.name }}</span>
+                                <span>Rs. {{ item.price }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Selected Items -->
+            <div class="bg-white rounded-xl shadow p-4 h-fit sticky top-4">
+                <h2 class="text-xl font-bold mb-4">
+                    Current Order
+                </h2>
+
+                <div id="selected-menu-items" class="space-y-2"></div>
+
+                <div class="border-t mt-4 pt-4">
+                    <h3 id="total-price" class="text-xl font-bold">
+                        Total: Rs. 0
+                    </h3>
+
+                    <button
+                        id="place-order-btn"
+                        class="w-full mt-4 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
+                    >
+                        Place Order
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const cart = {};
+        const menuItems = document.querySelectorAll(".menu-item");
+        const selectedItemsContainer = document.getElementById("selected-menu-items");
+        const totalPriceDisplay = document.getElementById("total-price");
+
+        menuItems.forEach(item => {
+            item.addEventListener("click", () => {
+
+                const id = item.dataset.itemId;
+                const name = item.dataset.itemName;
+                const price = Number(item.dataset.itemPrice);
+
+                if (cart[id]) {
+                    cart[id].quantity++;
+                } else {
+                    cart[id] = {
+                        id,
+                        name,
+                        price,
+                        quantity: 1
+                    };
+                }
+
+                renderCart();
+            });
+        });
+
+        function renderCart() {
+
+            selectedItemsContainer.innerHTML = "";
+
+            let total = 0;
+
+            Object.values(cart).forEach(item => {
+
+                total += item.price * item.quantity;
+
+                selectedItemsContainer.innerHTML += `
+                    <div class="flex justify-between items-center border rounded-lg p-3">
+                        <div>
+                            <div class="font-medium">${item.name}</div>
+                            <div class="text-sm text-gray-500">
+                                Rs. ${item.price}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button
+                                onclick="decreaseQuantity('${item.id}')"
+                                class="bg-red-500 text-white px-3 py-1 rounded"
+                            >
+                                -
+                            </button>
+
+                            <span class="font-bold">
+                                ${item.quantity}
+                            </span>
+
+                            <button
+                                onclick="increaseQuantity('${item.id}')"
+                                class="bg-green-500 text-white px-3 py-1 rounded"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            totalPriceDisplay.innerText = `Total: Rs. ${total}`;
+        }
+
+        function increaseQuantity(id) {
+            cart[id].quantity++;
+            renderCart();
+        }
+
+        function decreaseQuantity(id) {
+
+            cart[id].quantity--;
+
+            if (cart[id].quantity <= 0) {
+                delete cart[id];
+            }
+
+            renderCart();
+        }
+
+        document.getElementById("place-order-btn")
+            .addEventListener("click", () => {
+
+                const orderData = {
+                    table_id: "{{ table_id }}",
+                    items: Object.values(cart).map(item => ({
+                        item_id: item.id,
+                        quantity: item.quantity
+                    }))
+                };
+
+                console.log(orderData);
+
+                /*
+                fetch('/create-order/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify(orderData)
+                })
+                */
+            });
+    </script>
+</body>
+
+</html>
