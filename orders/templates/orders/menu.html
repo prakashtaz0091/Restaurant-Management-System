@@ -50,18 +50,20 @@
 
                 <div id="selected-menu-items" class="space-y-2"></div>
 
-                <div class="border-t mt-4 pt-4">
+
+                <form class="border-t mt-4 pt-4" method="post">
+                    {% csrf_token %}
                     <h3 id="total-price" class="text-xl font-bold">
                         Total: Rs. 0
                     </h3>
-
+                    <input id="order-items" type="hidden" name="order-items" value="">
                     <button
                         id="place-order-btn"
                         class="w-full mt-4 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
                     >
                         Place Order
                     </button>
-                </div>
+                </form>
             </div>
 
         </div>
@@ -80,6 +82,8 @@
                 const name = item.dataset.itemName;
                 const price = Number(item.dataset.itemPrice);
 
+                // console.log(id, name, price);
+                
                 if (cart[id]) {
                     cart[id].quantity++;
                 } else {
@@ -90,7 +94,8 @@
                         quantity: 1
                     };
                 }
-
+                // console.log(cart);
+                
                 renderCart();
             });
         });
@@ -167,18 +172,11 @@
                     }))
                 };
 
-                console.log(orderData);
+                // console.log(orderData);
+                // console.log(JSON.stringify(orderData));
+                
+                document.getElementById("order-items").value = JSON.stringify(orderData)
 
-                /*
-                fetch('/create-order/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify(orderData)
-                })
-                */
             });
     </script>
 </body>
