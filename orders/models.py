@@ -31,8 +31,15 @@ class MenuItem(models.Model):
 
 
 class Order(models.Model):
+    class ORDER_STATUS(models.TextChoices):
+        PREPARING = 'p', 'Preparing'
+        READY = 'r', 'Ready'
+        SERVED = 's', 'Served'
+        BILLED = 'b', 'Billed'
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     table = models.ForeignKey(Table, on_delete=models.PROTECT, related_name="orders")
+    status = models.CharField(max_length=2, choices=ORDER_STATUS, default=ORDER_STATUS.PREPARING)
     
     created_at = models.DateTimeField(auto_now_add=True)
     
