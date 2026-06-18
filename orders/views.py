@@ -48,8 +48,16 @@ def menu_view(request, table_id):
     
     
     categories = Category.objects.all()
+    orders = Order.objects.filter(
+        table_id=table_id
+        ).exclude(
+            status=Order.ORDER_STATUS.BILLED
+            ).order_by("-created_at")
+        
+    # print(orders)
     
     return render(request, "orders/menu.html", {
         'categories':categories,
-        'table_id':table_id
+        'table_id':table_id,
+        'orders':orders
     })

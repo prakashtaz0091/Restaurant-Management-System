@@ -1,3 +1,4 @@
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,12 +26,9 @@
 
                     <div class="grid gap-2">
                         {% for item in category.items.all %}
-                        <div
-                            class="menu-item cursor-pointer bg-orange-100 hover:bg-orange-200 rounded-lg p-4 transition"
-                            data-item-id="{{ item.id }}"
-                            data-item-name="{{ item.name }}"
-                            data-item-price="{{ item.price }}"
-                        >
+                        <div class="menu-item cursor-pointer bg-orange-100 hover:bg-orange-200 rounded-lg p-4 transition"
+                            data-item-id="{{ item.id }}" data-item-name="{{ item.name }}"
+                            data-item-price="{{ item.price }}">
                             <div class="flex justify-between">
                                 <span class="font-medium">{{ item.name }}</span>
                                 <span>Rs. {{ item.price }}</span>
@@ -57,13 +55,43 @@
                         Total: Rs. 0
                     </h3>
                     <input id="order-items" type="hidden" name="order-items" value="">
-                    <button
-                        id="place-order-btn"
-                        class="w-full mt-4 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
-                    >
+                    <button id="place-order-btn"
+                        class="w-full mt-4 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">
                         Place Order
                     </button>
                 </form>
+
+                <!-- Previous Orders -->
+                <div class="border-t mt-6 pt-4">
+                    <h3 class="text-xl font-bold mb-4">
+                        Previous Orders
+                    </h3>
+
+                    <div class="max-h-80 overflow-y-auto pr-2 space-y-4">
+                        {% for order in orders %}
+                        <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <div class="font-medium text-gray-800 mb-2">
+                                {{ order.table }}
+                            </div>
+
+                            <div class="text-sm text-gray-500 mb-2">
+                                {{ order.created_at|naturaltime }}
+                            </div>
+
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                {% for item in order.items.all %}
+                                <li>{{ item }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% empty %}
+                        <div class="text-gray-500 text-sm">
+                            No previous orders found.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -83,7 +111,7 @@
                 const price = Number(item.dataset.itemPrice);
 
                 // console.log(id, name, price);
-                
+
                 if (cart[id]) {
                     cart[id].quantity++;
                 } else {
@@ -95,7 +123,7 @@
                     };
                 }
                 // console.log(cart);
-                
+
                 renderCart();
             });
         });
@@ -174,7 +202,7 @@
 
                 // console.log(orderData);
                 // console.log(JSON.stringify(orderData));
-                
+
                 document.getElementById("order-items").value = JSON.stringify(orderData)
 
             });
