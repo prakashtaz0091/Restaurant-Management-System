@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Table, Category, MenuItem, Order, OrderItem
+from .models import Table, Category, MenuItem, Order, OrderItem, OrderHistory
 
 @admin.register(Table)
 class TableAdmin(admin.ModelAdmin):
@@ -9,6 +9,7 @@ class TableAdmin(admin.ModelAdmin):
 admin.site.register(Category)
 admin.site.register(MenuItem)
 admin.site.register(OrderItem)
+admin.site.register(OrderHistory)
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):

@@ -4,6 +4,7 @@ from accounts.models import User
 from .models import Table, Category, Order, OrderItem, MenuItem
 import json
 from django.contrib import messages
+from . import signals
 
 
 @role_required([User.ROLE_CHOICES.WAITER])
