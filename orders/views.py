@@ -62,3 +62,8 @@ def menu_view(request, table_id):
         'table_id':table_id,
         'orders':orders
     })
+
+
+@role_required([User.ROLE_CHOICES.KITCHEN])
+def kitchen_dashboard_view(request):
+    print("This is kitchen dashboard")
