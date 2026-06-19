@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .decorators import role_required
 from accounts.models import User
-from .models import Table, Category, Order, OrderItem, MenuItem
+from .models import Table, Category, Order, OrderItem, MenuItem, KitchenStation
 import json
 from django.contrib import messages
 from . import signals
@@ -40,7 +40,8 @@ def menu_view(request, table_id):
                 order=order,
                 menu_item=menu_item,
                 price=menu_item.price,
-                quantity=orderitem.get('quantity')
+                quantity=orderitem.get('quantity'),
+                priority=menu_item.default_priority
             )
 
         messages.success(request, "Order created successfully")
@@ -66,4 +67,22 @@ def menu_view(request, table_id):
 
 @role_required([User.ROLE_CHOICES.KITCHEN])
 def kitchen_dashboard_view(request):
-    print("This is kitchen dashboard")
+    
+    # stations = KitchenStation.objects.all()
+    # print(stations),
+    orderitems = OrderItem.objects.all().order_by("-priority")
+    grouped_items = {}
+    
+    for item in orderitems:
+        station_name = item.menu_item.station.name
+        if station_name not in grouped_items.keys():
+            grouped_items[station_name] = [item]
+        else:
+            grouped_items[station_name].append(item)
+            
+    # print(grouped_items)
+    
+    return render(request, "orders/kitchen_dashboard.html", {
+        # 'stations': stations
+        'order_items': grouped_items
+    })

@@ -20,11 +20,13 @@ class Category(models.Model):
         return self.name
     
     
-class KITCHEN_STATION(models.Model):
+class KitchenStation(models.Model):
+    code = models.CharField(max_length=50)
     name = models.CharField(max_length=200)
     
     def __str__(self):
         return self.name
+
 
 class MenuItem(models.Model):
     class PRIORITY_CHOICES(models.TextChoices):
@@ -33,7 +35,7 @@ class MenuItem(models.Model):
         LOW = '1', 'Low'
         
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="items")
-    station = models.ForeignKey(KITCHEN_STATION, on_delete=models.SET_NULL, null=True)
+    station = models.ForeignKey(KitchenStation, on_delete=models.SET_NULL, null=True, related_name="items")
     
     name = models.CharField(max_length=200)
     price = models.PositiveIntegerField()
