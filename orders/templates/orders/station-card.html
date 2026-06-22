@@ -1,0 +1,63 @@
+<section class="station-box bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+    <!-- Station Header -->
+    <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <h2 class="font-bold text-lg">
+            {{ station_name }}
+        </h2>
+
+        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
+            {{ items|length }} Items
+        </span>
+    </div>
+
+    <!-- Orders -->
+    <div class="p-4 space-y-3">
+
+        {% for item in items %}
+
+        <a href="{% url 'kitchen_item_view_url' item.id %}"
+            class="block border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition">
+
+            <div class="flex justify-between items-start gap-3">
+
+                <div>
+                    <h3 class="font-semibold text-slate-900">
+                        {{ item }}
+                    </h3>
+                </div>
+
+                <!-- Priority Badge -->
+                {% if item.priority == "3" %}
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                    High
+                </span>
+                {% elif item.priority == "2" %}
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                    Medium
+                </span>
+                {% else %}
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                    Low
+                </span>
+                {% endif %}
+
+            </div>
+
+            <div class="mt-3 text-sm text-slate-500">
+                Priority: {{ item.get_priority_display }}
+            </div>
+
+        </a>
+
+        {% empty %}
+
+        <div class="text-center py-10 text-slate-400">
+            No pending items
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>

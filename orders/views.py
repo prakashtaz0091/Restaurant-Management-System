@@ -7,7 +7,7 @@ from django.contrib import messages
 from . import signals
 from django.urls import reverse
 from urllib.parse import urlencode
-
+from django.db.models import Q
 
 @role_required([User.ROLE_CHOICES.WAITER])
 def tables_view(request):
@@ -72,10 +72,16 @@ def kitchen_dashboard_view(request):
     station_code = request.GET.get('station_code')
     request.session['station_code'] = station_code
     # 'steam' == orderitem -> menu_item -> station -> code
+    
+    orderitems = OrderItem.objects.exclude(
+        Q(status=OrderItem.ITEM_STATUS.READY) | Q(status=OrderItem.ITEM_STATUS.SERVED)
+    )
+
+
     if station_code is not None:
-        orderitems = OrderItem.objects.filter(menu_item__station__code=station_code)
+        orderitems = orderitems.filter(menu_item__station__code=station_code)
     else:
-        orderitems = OrderItem.objects.all()
+        orderitems = orderitems.all()
     
     orderitems = orderitems.order_by("-priority")
     
@@ -95,7 +101,21 @@ def kitchen_dashboard_view(request):
         'order_items': grouped_items
     })
     
+
+def kitchen_dashboard_live_view(request, station_code):
+    station = KitchenStation.objects.get(code=station_code)
+    orderitems = OrderItem.objects.filter(
+        menu_item__station__code=station_code
+        ).exclude(
+            Q(status=OrderItem.ITEM_STATUS.READY) | Q(status=OrderItem.ITEM_STATUS.SERVED)
+        ).order_by("-priority")
     
+    return render(request, "orders/station-card.html", {
+        'items':orderitems,
+        'station_name':station.name
+    })
+
+
 @role_required([User.ROLE_CHOICES.KITCHEN])
 def kitchen_item_view(request, pk):
 

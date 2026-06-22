@@ -5,5 +5,6 @@ urlpatterns = [
     path("tables/", views.tables_view, name="tables_view_url"),
     path("menu/<table_id>/", views.menu_view, name="menu_view_url"),
     path("kitchen/dashboard/", views.kitchen_dashboard_view, name="kitchen_dashboard_view_url"),
+    path("kitchen/<station_code>/live/", views.kitchen_dashboard_live_view, name="kitchen_dashboard_view_live_url"),
     path("kitchen/items/<pk>/", views.kitchen_item_view, name="kitchen_item_view_url"),
 ]

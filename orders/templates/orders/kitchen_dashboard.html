@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,11 +53,11 @@
         {% endif %}
 
         <!-- Station Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="stations-box grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
 
             {% for station_name, items in order_items.items %}
 
-            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <section class=" bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
                 <!-- Station Header -->
                 <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
@@ -74,7 +75,8 @@
 
                     {% for item in items %}
 
-                    <a href="{% url 'kitchen_item_view_url' item.id %}" class="block border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition">
+                    <a href="{% url 'kitchen_item_view_url' item.id %}"
+                        class="block border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition">
 
                         <div class="flex justify-between items-start gap-3">
 
@@ -86,17 +88,17 @@
 
                             <!-- Priority Badge -->
                             {% if item.priority == "3" %}
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                                    High
-                                </span>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                                High
+                            </span>
                             {% elif item.priority == "2" %}
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
-                                    Medium
-                                </span>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                                Medium
+                            </span>
                             {% else %}
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                                    Low
-                                </span>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                Low
+                            </span>
                             {% endif %}
 
                         </div>
@@ -125,5 +127,29 @@
 
     </main>
 
+    <script>
+        const stationBox = document.getElementsByClassName("stations-box")[0]
+
+        setInterval(() => {
+            console.log("Hey there");
+            fetch("{% url 'kitchen_dashboard_view_live_url' request.session.station_code %}")
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response.text();
+                })
+                .then(data => {
+                    console.log(data);
+                    // set blank
+                    stationBox.innerHTML = ""
+
+                    // set new data
+                    stationBox.innerHTML = data
+                })
+                .catch(error => console.error('Fetch error:', error));
+
+        }, 5000);   
+    </script>
+
 </body>
+
 </html>
