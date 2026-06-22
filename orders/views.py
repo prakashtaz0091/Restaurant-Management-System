@@ -68,9 +68,9 @@ def menu_view(request, table_id):
 @role_required([User.ROLE_CHOICES.KITCHEN])
 def kitchen_dashboard_view(request):
     
-    # stations = KitchenStation.objects.all()
-    # print(stations),
-    orderitems = OrderItem.objects.all().order_by("-priority")
+    station_code = request.GET.get('station_code', '')
+    
+    orderitems = OrderItem.objects.filter(menu_item__station__code=station_code).order_by("-priority")
     grouped_items = {}
     
     for item in orderitems:
