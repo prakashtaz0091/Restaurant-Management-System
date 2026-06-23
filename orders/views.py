@@ -7,7 +7,9 @@ from django.contrib import messages
 from . import signals
 from django.urls import reverse
 from urllib.parse import urlencode
-from django.db.models import Q
+from django.db.models import Q,  Exists, OuterRef
+from django.http import JsonResponse
+
 
 @role_required([User.ROLE_CHOICES.WAITER])
 def tables_view(request):
@@ -139,4 +141,25 @@ def kitchen_item_view(request, pk):
     
     return render(request, "orders/kitchen_item.html", {
         'order_item': orderitem
+    })
+    
+    
+@role_required([User.ROLE_CHOICES.WAITER])
+def tables_status_live(request):
+    
+    # list table ids which has at least one orderitem ready
+    table_ids = Table.objects.filter(
+            Exists(
+                OrderItem.objects.filter(
+                    order__table=OuterRef("pk"),
+                    status=OrderItem.ITEM_STATUS.READY
+                )
+            )
+        ).values_list("id", flat=True)
+    
+    # print(list(table_ids))
+    
+    
+    return JsonResponse({
+        'tables':list(table_ids)
     })

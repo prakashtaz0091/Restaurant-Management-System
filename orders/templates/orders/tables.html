@@ -7,6 +7,31 @@
     <title>Table Selection</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .blinking-effect {
+            animation: blink 1.6s infinite;
+            /* animation: blink 3s infinite; */
+            background-color: rgb(255, 224, 178);
+            /* soft warm orange */
+        }
+
+        @keyframes blink {
+            0% {
+                background-color: rgb(255, 224, 178);
+            }
+
+            50% {
+                background-color: rgb(255, 193, 7);
+                border: 10px solid red;
+                /* amber */
+            }
+
+            100% {
+                background-color: rgb(255, 224, 178);
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-slate-100 min-h-screen">
@@ -54,14 +79,14 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
 
                 {% for table in tables %}
-                <a href="{% url 'menu_view_url' table.id %}" class="bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50
+                <a id="{{table.id}}" href="{% url 'menu_view_url' table.id %}" class="bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50
                           rounded-xl p-6 shadow-sm transition-all duration-200
                           focus:outline-none focus:ring-4 focus:ring-blue-300">
 
                     <div class="flex flex-col items-center justify-center text-center">
 
                         <!-- Table Icon -->
-                        <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+                        <div id="table-icon-{{table.id}}"  class="w-14 h-14 rounded-full flex items-center justify-center mb-3">
                             <span class="text-blue-700 font-bold text-xl">
                                 {{ forloop.counter }}
                             </span>
@@ -90,6 +115,40 @@
 
     </div>
 
+
+    <script>
+
+        setInterval(() => {
+            console.log("Hey there");
+            fetch("{% url 'tables_status_live_url' %}")
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    // console.log(data);
+                    const tablesIds = data.tables
+                    // console.log(tablesIds);
+
+                    //clean all the previous blinking-efffects
+                    document.querySelectorAll(".blinking-effect").forEach(elment=>{
+                        elment.classList.remove("blinking-effect")
+                    })
+
+                    // now just add blinking-effect for given table ids
+                    tablesIds.forEach(id => {
+                        const tableIcon = document.getElementById(`table-icon-${id}`)
+                        // console.log(tableUIEl);
+                        tableIcon.classList.add("blinking-effect")
+
+                    });
+
+
+                })
+                .catch(error => console.error('Fetch error:', error));
+
+        }, 5000);   
+    </script>
 </body>
 
 </html>
