@@ -186,3 +186,27 @@ def served_confirmation(request, order_item_id):
         'order_item':order_item 
     })
 
+
+@role_required([User.ROLE_CHOICES.BILLING])
+def tables_for_billing(request):
+    
+    tables = Table.objects.all()    
+    
+    return render(request, "orders/tables-for-billing.html", {
+        'tables':tables
+    })
+
+
+@role_required([User.ROLE_CHOICES.BILLING])
+def billing_tables_status_live(request):
+    
+    # list table ids which has at least one order served
+    tables = Order.objects.filter(status=Order.ORDER_STATUS.SERVED).values_list('table', flat=True)
+    
+    # print(list(table_ids))
+    
+    
+    return JsonResponse({
+        'tables':list(set(tables))
+    })
+    

@@ -22,6 +22,8 @@ def login_view(request):
                 return redirect("tables_view_url")
             elif user.role == User.ROLE_CHOICES.KITCHEN:
                 return redirect("kitchen_dashboard_view_url")
+            elif user.role == User.ROLE_CHOICES.BILLING:
+                return redirect("tables_for_billing_url")
                 
         else:
             messages.error(request, "Invalid credentials")

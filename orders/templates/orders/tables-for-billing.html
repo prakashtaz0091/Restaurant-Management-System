@@ -120,7 +120,7 @@
 
         setInterval(() => {
             console.log("Hey there");
-            fetch("{% url 'tables_status_live_url' %}")
+            fetch("{% url 'billing_tables_status_live_url' %}")
                 .then(response => {
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     return response.json();
