@@ -7,7 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .blinking{
 
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0% {
+               background-color: rgb(80, 95, 0);
+            }
+            50% {
+                background-color: rgb(217, 255, 0);
+                border: 3px solid rgb(80, 95, 0);
+            }
+            100% {
+               background-color: rgb(80, 95, 0);
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100">
@@ -16,6 +34,7 @@
 
             <!-- Menu -->
             <div>
+                <a class="py-2 px-3 bg-green-600 text-gray-50 rounded-lg" href="{% url 'tables_view_url' %}">Back</a>
                 <h1 class="text-2xl font-bold mb-4">Menu</h1>
 
                 {% for category in categories %}
@@ -71,7 +90,7 @@
                         {% for order in orders %}
                         <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
                             <div class="font-medium text-gray-800 mb-2">
-                                {{ order.table }}
+                                {{ order.table }} | {{ order.get_status_display }}
                             </div>
 
                             <div class="text-sm text-gray-500 mb-2">
@@ -80,7 +99,15 @@
 
                             <ul class="list-disc list-inside text-gray-700 space-y-1">
                                 {% for item in order.items.all %}
-                                <li>{{ item }}</li>
+                                <li>{{ item }} 
+                                    <span class="px-3 py-1 bg-green-300 text-sm">{{ item.get_status_display }}</span>
+                                    
+                                    {% if item.status == 'r' %}
+                                    <span class="inline-block h-3 w-3 rounded-full blinking"></span>
+                                    <a href="{% url 'served_confirmation_url' item.id  %}" class="bg-green-600 px-3 py-1 text-gray-50 rounded-lg hover:bg-green-800 cursor-pointer"> Mark as served </a>
+                                    {% endif %}
+                                    
+                                </li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -90,6 +117,7 @@
                         </div>
                         {% endfor %}
                     </div>
+                    
                 </div>
 
             </div>
