@@ -77,9 +77,9 @@
             </h2>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-
+                
                 {% for table in tables %}
-                <a id="{{table.id}}" href="{% url 'menu_view_url' table.id %}" class="bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50
+                <a id="{{table.id}}" href="{% url 'billing_view_url' table.id %}" class="bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50
                           rounded-xl p-6 shadow-sm transition-all duration-200
                           focus:outline-none focus:ring-4 focus:ring-blue-300">
 
