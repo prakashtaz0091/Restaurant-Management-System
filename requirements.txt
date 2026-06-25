@@ -1,3 +1,13 @@
+appdirs==1.4.4
+argcomplete==3.6.3
 asgiref==3.11.1
 Django==6.0.6
+importlib_resources==7.1.0
+pillow==12.2.0
+python-barcode==0.16.1
+python-escpos==3.1
+PyYAML==6.0.3
+qrcode==8.2
+setuptools==82.0.1
+six==1.17.0
 sqlparse==0.5.5

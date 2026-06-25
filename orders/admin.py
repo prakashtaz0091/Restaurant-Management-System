@@ -18,8 +18,8 @@ class OrderAdmin(admin.ModelAdmin):
     
     
 @admin.register(OrderItem)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ["order", "status"]
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ["order", "status", "price", "quantity"]
     list_filter = ["order__table"]
     list_editable = ["status"]
     

@@ -102,3 +102,389 @@ http://127.0.0.1:8000/admin/
 pip freeze > requirements.txt
 ```
 3. Never upload venv/ to GitHub
+
+---
+# ESC/POS Printer Testing Using Docker
+
+This guide explains how to install Docker and run the following images:
+
+* `gilbertfl/escpos-netprinter:3.2`
+* `ghcr.io/lezram/escpos-emulator`
+
+---
+
+# Prerequisites
+
+Verify Docker is installed:
+
+```bash
+docker --version
+docker compose version
+```
+
+---
+
+# 1. Install Docker
+
+## Linux (Ubuntu/Debian)
+
+Install Docker Engine, Docker CLI, and Compose plugin.
+
+### Add Docker Repository
+
+```bash
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg
+
+sudo install -m 0755 -d /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) \
+  signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+  | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+### Install Docker
+
+```bash
+sudo apt update
+
+sudo apt install -y \
+  docker-ce \
+  docker-ce-cli \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin
+```
+
+### Start Docker
+
+```bash
+sudo systemctl enable docker
+sudo systemctl start docker
+```
+
+### Optional: Run Without sudo
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### Verify
+
+```bash
+docker run hello-world
+```
+
+---
+
+## macOS
+
+Docker Engine cannot run natively on macOS because Docker containers require a Linux kernel.
+
+Install a lightweight Docker-compatible runtime:
+
+### Option 1: Colima (Recommended)
+
+Install prerequisites:
+
+```bash
+brew install docker docker-compose colima
+```
+
+Start Colima:
+
+```bash
+colima start
+```
+
+Verify:
+
+```bash
+docker version
+docker run hello-world
+```
+
+### Option 2: Rancher Desktop
+
+Install:
+
+```bash
+brew install --cask rancher
+```
+
+Enable Docker compatibility mode and verify:
+
+```bash
+docker version
+```
+
+---
+
+## Windows
+
+Docker Engine cannot run directly on Windows without a Linux VM.
+
+### Option 1: Docker CLI + WSL2 + Docker Engine (Recommended)
+
+Install WSL2:
+
+```powershell
+wsl --install
+```
+
+Install Ubuntu from Microsoft Store.
+
+Inside Ubuntu:
+
+```bash
+sudo apt update
+
+# Follow Linux installation instructions above
+```
+
+Verify:
+
+```bash
+docker version
+docker run hello-world
+```
+
+### Option 2: Rancher Desktop
+
+Install using Winget:
+
+```powershell
+winget install RancherDesktop.RancherDesktop
+```
+
+Enable Docker CLI support.
+
+Verify:
+
+```powershell
+docker version
+```
+
+> Note: Docker Desktop is intentionally omitted from this guide because it is significantly heavier than the alternatives above.
+
+---
+
+# 2. Pull Required Images
+
+```bash
+docker pull ghcr.io/lezram/escpos-emulator
+docker pull gilbertfl/escpos-netprinter:3.2
+```
+
+Verify:
+
+```bash
+docker images
+```
+
+---
+
+# 3. Start ESC/POS Emulator
+
+Run the emulator container:
+
+```bash
+docker run -d \
+  --name escpos-emulator \
+  -p 8080:8080 \
+  -p 9100:9100 \
+  ghcr.io/lezram/escpos-emulator
+```
+
+Verify:
+
+```bash
+docker ps
+```
+
+---
+
+# 4. Access Emulator UI
+
+Open:
+
+```text
+http://localhost:8080
+```
+
+The web interface displays received ESC/POS print jobs.
+
+---
+
+# 5. Test Printing
+
+Send plain text:
+
+```bash
+echo "Hello ESC/POS" | nc localhost 9100
+```
+
+Send ESC/POS commands:
+
+```bash
+printf "\x1B\x40Hello World\n\n\n" | nc localhost 9100
+```
+
+Refresh the emulator UI to view output.
+
+---
+
+# 6. Run Network Printer Container
+
+```bash
+docker run -d \
+  --name escpos-netprinter \
+  gilbertfl/escpos-netprinter:3.2
+```
+
+Verify:
+
+```bash
+docker ps
+```
+
+---
+
+# 7. Docker Compose Example
+
+Create a file named `docker-compose.yml`.
+
+```yaml
+services:
+  escpos-emulator:
+    image: ghcr.io/lezram/escpos-emulator
+    container_name: escpos-emulator
+    ports:
+      - "8080:8080"
+      - "9100:9100"
+
+  escpos-netprinter:
+    image: gilbertfl/escpos-netprinter:3.2
+    container_name: escpos-netprinter
+    depends_on:
+      - escpos-emulator
+```
+
+Start:
+
+```bash
+docker compose up -d
+```
+
+View status:
+
+```bash
+docker compose ps
+```
+
+Stop:
+
+```bash
+docker compose down
+```
+
+---
+
+# 8. Logs
+
+View emulator logs:
+
+```bash
+docker logs escpos-emulator
+```
+
+View printer logs:
+
+```bash
+docker logs escpos-netprinter
+```
+
+Follow logs:
+
+```bash
+docker logs -f escpos-emulator
+```
+
+---
+
+# 9. Cleanup
+
+Stop containers:
+
+```bash
+docker stop escpos-emulator escpos-netprinter
+```
+
+Remove containers:
+
+```bash
+docker rm escpos-emulator escpos-netprinter
+```
+
+Remove images:
+
+```bash
+docker rmi \
+  ghcr.io/lezram/escpos-emulator \
+  gilbertfl/escpos-netprinter:3.2
+```
+
+---
+
+# Troubleshooting
+
+## Check Running Containers
+
+```bash
+docker ps -a
+```
+
+## Check Open Ports
+
+Linux/macOS:
+
+```bash
+lsof -i :8080
+lsof -i :9100
+```
+
+Windows:
+
+```powershell
+netstat -ano | findstr 8080
+netstat -ano | findstr 9100
+```
+
+## Test Connectivity
+
+```bash
+nc -vz localhost 9100
+```
+
+Expected output:
+
+```text
+Connection to localhost 9100 port [tcp/*] succeeded
+```
+
+## Check Docker Status
+
+```bash
+docker info
+```
+
+If Docker is not running, start the runtime (Docker Engine, Colima, Rancher Desktop, etc.) and retry.

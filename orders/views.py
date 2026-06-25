@@ -7,8 +7,11 @@ from django.contrib import messages
 from . import signals
 from django.urls import reverse
 from urllib.parse import urlencode
-from django.db.models import Q,  Exists, OuterRef
+from django.db.models import Q,  Exists, OuterRef, F, Sum, DecimalField, ExpressionWrapper
 from django.http import JsonResponse
+from .utils import print_restaurant_receipt
+import pprint
+import decimal
 
 
 @role_required([User.ROLE_CHOICES.WAITER])
@@ -213,4 +216,108 @@ def billing_tables_status_live(request):
     
 @role_required([User.ROLE_CHOICES.BILLING])
 def billing_view(request, table_id):
-    return render(request, "orders/billing.html")
+    order_items = (
+        OrderItem.objects
+        .filter(order__table_id=table_id)
+        .exclude(order__status=Order.ORDER_STATUS.BILLED)
+        .annotate(
+            item_total=ExpressionWrapper(
+                    F("quantity") * F("price"),
+                    output_field=DecimalField(max_digits=12, decimal_places=2),
+                )
+        )
+    )
+
+    total = order_items.aggregate(
+        total=Sum("item_total")
+    )["total"] or 0
+    
+    request.session['total'] = str(total)
+
+    proceed_billing = not order_items.exclude(
+        status=OrderItem.ITEM_STATUS.SERVED
+    ).exists()
+
+    return render(
+        request,
+        "orders/billing.html",
+        {
+            "items": order_items,
+            "total": total,
+            "proceed_billing": proceed_billing,
+            "table_id": table_id
+        },
+    )
+    
+
+@role_required([User.ROLE_CHOICES.BILLING])
+def billing_paid_view(request, table_id):
+    if request.method == "POST":
+        table_id = request.POST.get("table_id")
+        
+        orders = (Order.objects
+                 .filter(table_id=table_id)
+                 .exclude(status=Order.ORDER_STATUS.BILLED)
+                 )
+        
+        items = []
+        total = decimal.Decimal(request.session.get('total'))
+        table_name = None
+        for order in orders:
+            if table_name is None:
+                table_name = order.table.name
+            for item in order.items.all():
+                items.append(
+                    {
+                        "name": item.menu_item.name,
+                        "price": item.price * item.quantity,
+                        "qty": item.quantity,
+                    }
+                )
+        
+        print_data = {
+            "table_name":table_name,
+            "total": total,
+            "items": items
+        }            
+        
+        result = print_restaurant_receipt(print_data)
+        print("Printer result ", result)
+        
+        # orders_count = (Order.objects
+        #          .filter(table_id=table_id)
+        #          .exclude(status=Order.ORDER_STATUS.BILLED)
+        #          .update(status=Order.ORDER_STATUS.BILLED)
+        #          )  
+        # messages.success(request, f"Billing for {orders_count} orders completed successfully.")
+        
+        return redirect("tables_for_billing_url")
+    
+
+def trigger_print(request):
+    sample_order = {
+        "order_id": 1024,
+        "table_no": 5,
+        "items": [
+            {
+                "name": "Classic Burger",
+                "price": 12.50,
+                "qty": 2,
+            },
+            {
+                "name": "Cheese Fries",
+                "price": 4.50,
+                "qty": 1,
+            },
+            {
+                "name": "Coke Zero",
+                "price": 2.00,
+                "qty": 2,
+            },
+        ],
+        "total": 31.50,
+    }
+    if print_restaurant_receipt(sample_order):
+        return JsonResponse({"status": "success", "message": "Sent to emulator"})
+    else:
+        return JsonResponse({"status": "error", "message": "Printer unavailable"}, status=503)
