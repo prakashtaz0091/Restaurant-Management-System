@@ -1,155 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'orders/base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitchen Dashboard</title>
+{% block title %}
+Kitchen Dashboard
+{% endblock %}
 
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+{% block heading %}
+Kitchen Dashboard
+{% endblock %}
 
-<body class="bg-slate-100 min-h-screen">
+{% block extra_head %}
 
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-4">
+{% endblock %}
 
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+{% block main_content %}
+<!-- Station Grid -->
+<div class="stations-box grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                <div>
-                    <h1 class="text-3xl font-bold text-slate-900">
-                        Kitchen Dashboard
-                    </h1>
+    {% for station_name, items in order_items.items %}
+    {% include 'orders/station-card.html' %}   
+    {% endfor %}
 
-                    <div class="mt-1 text-sm text-slate-500">
-                        {{ request.user.first_name }} {{ request.user.last_name }}
-                        <span class="mx-2">•</span>
-                        {{ request.user.get_role_display }}
-                    </div>
-                </div>
+</div>
+{% endblock %}
 
-                <a href="{% url 'logout_view_url' %}"
-                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition">
-                    Logout
-                </a>
+{% block extra_script %}
+<script>
+    const stationBox = document.getElementsByClassName("stations-box")[0]
 
-            </div>
+    setInterval(() => {
+        console.log("Hey there");
+        fetch("{% url 'kitchen_dashboard_view_live_url' request.session.station_code %}")
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.text();
+            })
+            .then(data => {
+                console.log(data);
+                // set blank
+                stationBox.innerHTML = ""
 
-        </div>
-    </header>
+                // set new data
+                stationBox.innerHTML = data
+            })
+            .catch(error => console.error('Fetch error:', error));
 
-    <main class="max-w-7xl mx-auto p-4 md:p-6">
-
-        <!-- Messages -->
-        {% if messages %}
-        <div class="mb-6 space-y-3">
-            {% for message in messages %}
-            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- Station Grid -->
-        <div class="stations-box grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-
-            {% for station_name, items in order_items.items %}
-
-            <section class=" bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-
-                <!-- Station Header -->
-                <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
-                    <h2 class="font-bold text-lg">
-                        {{ station_name }}
-                    </h2>
-
-                    <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
-                        {{ items|length }} Items
-                    </span>
-                </div>
-
-                <!-- Orders -->
-                <div class="p-4 space-y-3">
-
-                    {% for item in items %}
-
-                    <a href="{% url 'kitchen_item_view_url' item.id %}"
-                        class="block border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition">
-
-                        <div class="flex justify-between items-start gap-3">
-
-                            <div>
-                                <h3 class="font-semibold text-slate-900">
-                                    {{ item }}
-                                </h3>
-                            </div>
-
-                            <!-- Priority Badge -->
-                            {% if item.priority == "3" %}
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                                High
-                            </span>
-                            {% elif item.priority == "2" %}
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
-                                Medium
-                            </span>
-                            {% else %}
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                                Low
-                            </span>
-                            {% endif %}
-
-                        </div>
-
-                        <div class="mt-3 text-sm text-slate-500">
-                            Priority: {{ item.get_priority_display }}
-                        </div>
-
-                    </a>
-
-                    {% empty %}
-
-                    <div class="text-center py-10 text-slate-400">
-                        No pending items
-                    </div>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-            {% endfor %}
-
-        </div>
-
-    </main>
-
-    <script>
-        const stationBox = document.getElementsByClassName("stations-box")[0]
-
-        setInterval(() => {
-            console.log("Hey there");
-            fetch("{% url 'kitchen_dashboard_view_live_url' request.session.station_code %}")
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    return response.text();
-                })
-                .then(data => {
-                    console.log(data);
-                    // set blank
-                    stationBox.innerHTML = ""
-
-                    // set new data
-                    stationBox.innerHTML = data
-                })
-                .catch(error => console.error('Fetch error:', error));
-
-        }, 5000);   
-    </script>
-
-</body>
-
-</html>
+    }, 5000);   
+</script>
+{% endblock %}
