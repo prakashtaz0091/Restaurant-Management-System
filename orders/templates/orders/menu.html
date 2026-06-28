@@ -49,6 +49,9 @@
                             data-item-id="{{ item.id }}" data-item-name="{{ item.name }}"
                             data-item-price="{{ item.price }}">
                             <div class="flex justify-between">
+                                {% if item.image %}
+                                <img class="h-20 w-20 object-cover" src="{{ item.image.url }}" alt="">
+                                {% endif %}
                                 <span class="font-medium">{{ item.name }}</span>
                                 <span>Rs. {{ item.price }}</span>
                             </div>

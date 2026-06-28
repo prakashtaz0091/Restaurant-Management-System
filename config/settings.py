@@ -108,4 +108,5 @@ AUTH_USER_MODEL = "accounts.User"
 
 SESSION_COOKIE_AGE = 60*60*24*30 # 1 month in seconds
 
-STATIC_URL = 'static/'
+MEDIA_ROOT = "media/"
+MEDIA_URL = "media/"
