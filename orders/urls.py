@@ -1,7 +1,7 @@
 from django.urls import path
 from .import views
 
-urlpatterns = [
+urlpatterns = [    
     path("tables/", views.tables_view, name="tables_view_url"),
     path("menu/<table_id>/", views.menu_view, name="menu_view_url"),
     path("tables/live/", views.tables_status_live, name="tables_status_live_url"),
@@ -17,5 +17,5 @@ urlpatterns = [
     path("billing/<table_id>/paid/", views.billing_paid_view, name="billing_paid_view_url"),
     path("billing/<table_id>/", views.billing_view, name="billing_view_url"),
     
-    path("print/", views.trigger_print, name="print")
+    # path("print/", views.trigger_print, name="print")
 ]

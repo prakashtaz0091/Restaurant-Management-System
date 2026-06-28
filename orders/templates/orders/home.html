@@ -1,0 +1,542 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChaiAdda — Traditional Nepali Dining</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts: Fraunces (display, warm editorial serif for a chef-driven feel), Inter (body), JetBrains Mono (small numerals for menu/dish references) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#241B16',
+                        paper: '#FBF6EF',
+                        line: '#E6D9C6',
+                        primary: '#9A3324',
+                        'primary-dark': '#7A2619',
+                        accent: '#B98427',
+                        clay: '#F1E4D1',
+                    },
+                    fontFamily: {
+                        display: ['Fraunces', 'serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    borderRadius: {
+                        DEFAULT: '6px',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #241B16;
+        }
+        .font-display {
+            font-family: 'Fraunces', serif;
+            font-optical-sizing: auto;
+        }
+        .num-tag {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.03em;
+        }
+        /* Subtle, professional hover transitions only */
+        .hover-lift {
+            transition: transform 0.18s ease, border-color 0.18s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+        .btn-transition {
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        }
+        .underline-grow {
+            position: relative;
+        }
+        .underline-grow::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0;
+            height: 1.5px;
+            background-color: #9A3324;
+            transition: width 0.2s ease;
+        }
+        .underline-grow:hover::after {
+            width: 100%;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white text-ink antialiased">
+
+    <!-- ============================================ -->
+    <!-- Sticky Navigation -->
+    <!-- ============================================ -->
+    <header class="sticky top-0 z-50 bg-paper/95 backdrop-blur-sm border-b border-line">
+        <nav class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-[76px]">
+
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-2 flex-shrink-0">
+                    <span class="font-display font-semibold text-2xl text-ink">ChaiAdda</span>
+                </a>
+
+                <!-- Center Links -->
+                <div class="hidden lg:flex items-center gap-10">
+                    <a href="#home" class="text-[15px] font-medium text-ink/70 hover:text-ink underline-grow transition-colors">Home</a>
+                    <a href="#menu" class="text-[15px] font-medium text-ink/70 hover:text-ink underline-grow transition-colors">Menu</a>
+                    <a href="#about" class="text-[15px] font-medium text-ink/70 hover:text-ink underline-grow transition-colors">Our Story</a>
+                    <a href="#reviews" class="text-[15px] font-medium text-ink/70 hover:text-ink underline-grow transition-colors">Reviews</a>
+                    <a href="#contact" class="text-[15px] font-medium text-ink/70 hover:text-ink underline-grow transition-colors">Visit Us</a>
+                </div>
+
+                <!-- CTA -->
+                <div class="flex items-center gap-4">
+                    <a href="tel:+9771234567" class="hidden sm:inline-block text-[15px] font-medium text-ink/70 hover:text-ink transition-colors">Call Us</a>
+                    <a href="#contact" class="btn-transition inline-flex items-center justify-center bg-primary text-white text-[15px] font-medium px-5 py-2.5 rounded hover:bg-primary-dark">
+                        Reserve a Table
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="lg:hidden flex items-center justify-center w-10 h-10 -mr-2" aria-label="Open menu">
+                    <svg class="w-6 h-6 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile menu panel -->
+            <div id="mobileMenu" class="hidden lg:hidden pb-6 border-t border-line pt-4">
+                <div class="flex flex-col gap-4">
+                    <a href="#home" class="text-[15px] font-medium text-ink/80">Home</a>
+                    <a href="#menu" class="text-[15px] font-medium text-ink/80">Menu</a>
+                    <a href="#about" class="text-[15px] font-medium text-ink/80">Our Story</a>
+                    <a href="#reviews" class="text-[15px] font-medium text-ink/80">Reviews</a>
+                    <a href="#contact" class="text-[15px] font-medium text-ink/80">Visit Us</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- Hero Section -->
+    <!-- ============================================ -->
+    <section id="home" class="relative overflow-hidden bg-paper">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-16 lg:pb-28">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+                <!-- Left: Copy -->
+                <div>
+                    <div class="inline-flex items-center gap-2 num-tag text-xs text-primary bg-clay border border-line rounded px-3 py-1.5 mb-6">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        EST. KATHMANDU
+                    </div>
+
+                    <h1 class="font-display font-semibold text-[2.5rem] sm:text-5xl lg:text-[3.4rem] leading-[1.08] text-ink mb-6">
+                        Nepali flavour, served the way it was meant to be.
+                    </h1>
+
+                    <p class="text-lg text-ink/65 leading-relaxed mb-8 max-w-lg">
+                        ChaiAdda brings the warmth of a Kathmandu teahouse and the precision of a chef's kitchen together — traditional recipes, slow-cooked and thoughtfully served.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 mb-10">
+                        <a href="#contact" class="btn-transition inline-flex items-center justify-center bg-primary text-white font-medium px-7 py-3.5 rounded hover:bg-primary-dark">
+                            Reserve a Table
+                        </a>
+                        <a href="#menu" class="btn-transition inline-flex items-center justify-center border border-line text-ink font-medium px-7 py-3.5 rounded hover:border-ink/40">
+                            View Menu
+                        </a>
+                    </div>
+
+                    <div class="flex items-center gap-8 num-tag text-xs text-ink/45">
+                        <span>OPEN DAILY · 11AM–10PM</span>
+                        <span class="w-1 h-1 rounded-full bg-ink/20"></span>
+                        <span>THAMEL, KATHMANDU</span>
+                    </div>
+                </div>
+
+                <!-- Right: Hero image -->
+                <div class="relative">
+                    <div class="absolute -inset-4 border border-line rounded-lg -z-10 hidden sm:block"></div>
+                    <div class="rounded-lg border border-line shadow-[0_8px_30px_rgba(36,27,22,0.1)] overflow-hidden bg-clay aspect-[4/5] sm:aspect-[5/6]">
+                        <img src="{% static 'orders/images/hero.jpg' %}" alt="Signature Nepali dish at ChaiAdda" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Menu Highlights Section -->
+    <!-- ============================================ -->
+    <section id="menu" class="border-t border-line">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
+
+            <div class="max-w-2xl mb-14 lg:mb-16">
+                <span class="num-tag text-xs text-primary tracking-wide">THE MENU</span>
+                <h2 class="font-display font-semibold text-3xl sm:text-4xl text-ink mt-3">
+                    Dishes rooted in tradition.
+                </h2>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+
+                <!-- Dish 1: Momo -->
+                <div class="hover-lift bg-white border border-line rounded-lg p-7 flex flex-col">
+                    <div class="rounded-md overflow-hidden border border-line mb-6 aspect-[4/3]">
+                        <img src="{% static 'orders/images/momo.jpg' %}" alt="Steamed momo with sesame chutney" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-display font-semibold text-lg text-ink">Handmade Momo</h3>
+                        <span class="num-tag text-xs text-ink/40">01</span>
+                    </div>
+                    <p class="text-[15px] text-ink/60 leading-relaxed">
+                        Steamed dumplings filled with spiced buff or vegetables, folded fresh each morning and served with our house sesame chutney.
+                    </p>
+                </div>
+
+                <!-- Dish 2: Thali -->
+                <div class="hover-lift bg-white border border-line rounded-lg p-7 flex flex-col">
+                    <div class="rounded-md overflow-hidden border border-line mb-6 aspect-[4/3]">
+                        <img src="{% static 'orders/images/thali set.jpg' %}" alt="Traditional Nepali thali set" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-display font-semibold text-lg text-ink">Ghar Ko Thali</h3>
+                        <span class="num-tag text-xs text-ink/40">02</span>
+                    </div>
+                    <p class="text-[15px] text-ink/60 leading-relaxed">
+                        Dal, bhat, and seasonal tarkari, finished with gundruk and a side of homemade achar — the meal we grew up eating, plated for the table.
+                    </p>
+                </div>
+
+                <!-- Dish 3: Chiya -->
+                <div class="hover-lift bg-white border border-line rounded-lg p-7 flex flex-col relative">
+                    <div class="absolute top-7 right-7 num-tag text-[11px] font-semibold text-accent bg-clay border border-line rounded-full px-2.5 py-1">
+                        HOUSE SPECIAL
+                    </div>
+                    <div class="rounded-md overflow-hidden border border-line mb-6 aspect-[4/3]">
+                        <img src="{% static 'orders/images/masala-chai.jpg' %}" alt="Hand-poured masala chiya" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-display font-semibold text-lg text-ink">Adda Chiya</h3>
+                        <span class="num-tag text-xs text-ink/40">03</span>
+                    </div>
+                    <p class="text-[15px] text-ink/60 leading-relaxed">
+                        Our namesake masala chiya, slow-brewed with hand-ground spices and poured the way it's been done at every Kathmandu adda for generations.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Why Dine With Us Section -->
+    <!-- ============================================ -->
+    <section class="bg-paper border-t border-line">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+
+                <!-- Left: Heading -->
+                <div>
+                    <span class="num-tag text-xs text-primary tracking-wide">THE EXPERIENCE</span>
+                    <h2 class="font-display font-semibold text-3xl sm:text-4xl text-ink mt-3 mb-5 leading-tight">
+                        Every plate, made with intent.
+                    </h2>
+                    <p class="text-ink/60 leading-relaxed max-w-md">
+                        From the moment your order is placed to the moment it reaches your table, every step is handled with care by our floor and kitchen team.
+                    </p>
+                </div>
+
+                <!-- Right: Highlight cards -->
+                <div class="grid sm:grid-cols-2 gap-5">
+
+                    <div class="border border-line rounded-lg p-6">
+                        <svg class="w-5 h-5 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3zM12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" />
+                        </svg>
+                        <h3 class="font-display font-semibold text-base text-ink mb-1.5">Cooked to order</h3>
+                        <p class="text-sm text-ink/55 leading-relaxed">Your order goes straight to our kitchen the moment it's placed — nothing sits, nothing waits.</p>
+                    </div>
+
+                    <div class="border border-line rounded-lg p-6">
+                        <svg class="w-5 h-5 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <h3 class="font-display font-semibold text-base text-ink mb-1.5">Attentive service</h3>
+                        <p class="text-sm text-ink/55 leading-relaxed">Our waiters know the menu by heart and check in without hovering.</p>
+                    </div>
+
+                    <div class="border border-line rounded-lg p-6">
+                        <svg class="w-5 h-5 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                        </svg>
+                        <h3 class="font-display font-semibold text-base text-ink mb-1.5">Honest billing</h3>
+                        <p class="text-sm text-ink/55 leading-relaxed">Clear, itemized bills with no surprises at the end of the meal.</p>
+                    </div>
+
+                    <div class="border border-line rounded-lg p-6">
+                        <svg class="w-5 h-5 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+                        </svg>
+                        <h3 class="font-display font-semibold text-base text-ink mb-1.5">Consistent every time</h3>
+                        <p class="text-sm text-ink/55 leading-relaxed">Recipes and timing are kept consistent, so your favourite dish tastes the same on every visit.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Our Story Section -->
+    <!-- ============================================ -->
+    <section id="about" class="border-t border-line">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+                <!-- Image -->
+                <div class="order-2 lg:order-1">
+                    <div class="rounded-lg overflow-hidden border border-line shadow-[0_8px_30px_rgba(36,27,22,0.08)]">
+                        <img src="{% static 'orders/images/kitchen.jpg' %}" alt="Inside ChaiAdda restaurant" class="w-full h-auto">
+                    </div>
+                </div>
+
+                <!-- Text -->
+                <div class="order-1 lg:order-2">
+                    <span class="num-tag text-xs text-primary tracking-wide">OUR STORY</span>
+                    <h2 class="font-display font-semibold text-3xl sm:text-4xl text-ink mt-3 mb-6 leading-tight">
+                        A teahouse, grown into a kitchen.
+                    </h2>
+                    <p class="text-ink/65 leading-relaxed mb-8">
+                        ChaiAdda began as a single table and a kettle of chiya — a place for neighbours to sit, talk, and eat well. That spirit hasn't changed. What's grown is the kitchen behind it: a chef-led team dedicated to preparing traditional Nepali dishes with the same care you'd find in a home kitchen, at the pace a real meal deserves.
+                    </p>
+
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="num-tag text-xs text-primary mt-1">01</span>
+                            <span class="text-[15px] text-ink/70">Recipes passed down rather than reinvented</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="num-tag text-xs text-primary mt-1">02</span>
+                            <span class="text-[15px] text-ink/70">Spices ground fresh, in small batches, daily</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="num-tag text-xs text-primary mt-1">03</span>
+                            <span class="text-[15px] text-ink/70">A kitchen that cooks to order, never in advance</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="num-tag text-xs text-primary mt-1">04</span>
+                            <span class="text-[15px] text-ink/70">A dining room built for long, unhurried meals</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Customer Reviews Section -->
+    <!-- ============================================ -->
+    <section id="reviews" class="bg-paper border-t border-line">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
+
+            <div class="max-w-2xl mb-14 lg:mb-16">
+                <span class="num-tag text-xs text-primary tracking-wide">REVIEWS</span>
+                <h2 class="font-display font-semibold text-3xl sm:text-4xl text-ink mt-3">
+                    What our guests say.
+                </h2>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+
+                <!-- Review 1 -->
+                <div class="hover-lift bg-white border border-line rounded-lg p-7">
+                    <div class="flex text-primary mb-4" aria-label="5 out of 5 stars">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                    </div>
+                    <p class="text-[15px] text-ink/70 leading-relaxed mb-6">
+                        The thali tasted exactly like my grandmother's cooking. Quietly the best Nepali food I've had outside a home kitchen.
+                    </p>
+                    <div class="flex items-center gap-3 pt-5 border-t border-line">
+                        <img src="{% static 'orders/images/cus-1.png' %}" alt="" class="w-10 h-10 rounded-full object-cover border border-line">
+                        <div>
+                            <p class="font-medium text-sm text-ink">Sarita Gurung</p>
+                            <p class="text-xs text-ink/50">Regular guest</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="hover-lift bg-white border border-line rounded-lg p-7">
+                    <div class="flex text-primary mb-4" aria-label="5 out of 5 stars">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                    </div>
+                    <p class="text-[15px] text-ink/70 leading-relaxed mb-6">
+                        The momo here are on another level — thin wrappers, properly spiced filling, and the chutney is addictive.
+                    </p>
+                    <div class="flex items-center gap-3 pt-5 border-t border-line">
+                        <img src="{% static 'orders/images/cus-2.png' %}" alt="" class="w-10 h-10 rounded-full object-cover border border-line">
+                        <div>
+                            <p class="font-medium text-sm text-ink">Anup Shrestha</p>
+                            <p class="text-xs text-ink/50">Regular guest</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="hover-lift bg-white border border-line rounded-lg p-7">
+                    <div class="flex text-primary mb-4" aria-label="5 out of 5 stars">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.6 5.6 6.1.5-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6L1.3 7.1l6.1-.5z"/></svg>
+                    </div>
+                    <p class="text-[15px] text-ink/70 leading-relaxed mb-6">
+                        Slow, unhurried service in the best way — they let you sit and talk for hours. The chiya is reason enough to come back.
+                    </p>
+                    <div class="flex items-center gap-3 pt-5 border-t border-line">
+                        <img src="{% static 'orders/images/cus-3.png' %}" alt="" class="w-10 h-10 rounded-full object-cover border border-line">
+                        <div>
+                            <p class="font-medium text-sm text-ink">Priya Tamang</p>
+                            <p class="text-xs text-ink/50">Regular guest</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Final CTA Section -->
+    <!-- ============================================ -->
+    <section class="bg-ink">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-24 text-center">
+            <span class="num-tag text-xs text-amber-200 tracking-wide">JOIN US</span>
+            <h2 class="font-display font-semibold text-3xl sm:text-4xl lg:text-[2.75rem] text-white mt-3 mb-5 max-w-2xl mx-auto leading-tight">
+                Pull up a chair at the adda.
+            </h2>
+            <p class="text-white/60 max-w-xl mx-auto mb-10 leading-relaxed">
+                Whether it's a quick chiya or a full thali with friends, your table is waiting.
+            </p>
+            <a href="#contact" class="btn-transition inline-flex items-center justify-center bg-primary text-white font-medium px-8 py-3.5 rounded hover:bg-primary-dark">
+                Reserve a Table
+            </a>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Footer -->
+    <!-- ============================================ -->
+    <footer id="contact" class="bg-[#1A130F] text-white/70">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-20">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
+
+                <!-- Logo + description -->
+                <div class="lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="font-display font-semibold text-2xl text-white">ChaiAdda</span>
+                    </div>
+                    <p class="text-sm text-white/50 leading-relaxed max-w-xs">
+                        Traditional Nepali dining in the heart of Thamel — slow-cooked food, served the way it's always been.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-white text-sm font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-3 text-sm text-white/50">
+                        <li><a href="#menu" class="hover:text-white transition-colors">Menu</a></li>
+                        <li><a href="#about" class="hover:text-white transition-colors">Our Story</a></li>
+                        <li><a href="#reviews" class="hover:text-white transition-colors">Reviews</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">Reservations</a></li>
+                    </ul>
+                </div>
+
+                <!-- Hours -->
+                <div>
+                    <h3 class="text-white text-sm font-semibold mb-4">Hours</h3>
+                    <ul class="space-y-3 text-sm text-white/50">
+                        <li>Mon – Sun</li>
+                        <li>11:00 AM – 10:00 PM</li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h3 class="text-white text-sm font-semibold mb-4">Visit Us</h3>
+                    <ul class="space-y-3 text-sm text-white/50">
+                        <li>Thamel, Kathmandu</li>
+                        <li>+977 1 234 5678</li>
+                        <li>hello@chaiadda.com</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Bottom bar -->
+            <div class="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p class="text-xs text-white/40">&copy; 2026 ChaiAdda. All rights reserved.</p>
+
+                <!-- Social icons -->
+                <div class="flex items-center gap-4">
+                    <a href="#" aria-label="Instagram" class="text-white/40 hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0 5.838a4 4 0 100 8 4 4 0 000-8zm6.406-.617a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Facebook" class="text-white/40 hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.99h-2.54v-2.888h2.54V9.797c0-2.506 1.493-3.89 3.776-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.878h2.773l-.443 2.888h-2.33v6.99C18.343 21.128 22 16.991 22 12z"/></svg>
+                    </a>
+                    <a href="#" aria-label="WhatsApp" class="text-white/40 hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-1.888-.94-3.13-1.679-4.382-3.804-.331-.566.331-.526.945-1.752.105-.21.054-.394-.046-.554-.099-.16-.673-1.621-.922-2.207-.245-.58-.5-.5-.673-.51-.173-.01-.371-.012-.57-.012-.198 0-.52.074-.792.36-.273.288-1.04 1.016-1.04 2.479s1.067 2.876 1.213 3.074c.149.198 2.04 3.12 4.952 4.243 2.913 1.124 2.913.748 3.86.624.947-.124 3.067-1.254 3.5-2.45.434-1.198.434-2.222.296-2.43-.123-.198-.301-.297-.288-.282M12.024 2.004c-5.514 0-9.99 4.475-9.99 9.989 0 1.765.46 3.428 1.265 4.872l-1.336 4.879 5.005-1.31a9.95 9.95 0 0 0 5.056 1.359h.004c5.513 0 9.989-4.476 9.989-9.99 0-5.514-4.476-9.799-9.993-9.799"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function () {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+    </script>
+
+</body>
+</html>

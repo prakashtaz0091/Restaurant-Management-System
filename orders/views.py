@@ -294,30 +294,5 @@ def billing_paid_view(request, table_id):
         return redirect("tables_for_billing_url")
     
 
-def trigger_print(request):
-    sample_order = {
-        "order_id": 1024,
-        "table_no": 5,
-        "items": [
-            {
-                "name": "Classic Burger",
-                "price": 12.50,
-                "qty": 2,
-            },
-            {
-                "name": "Cheese Fries",
-                "price": 4.50,
-                "qty": 1,
-            },
-            {
-                "name": "Coke Zero",
-                "price": 2.00,
-                "qty": 2,
-            },
-        ],
-        "total": 31.50,
-    }
-    if print_restaurant_receipt(sample_order):
-        return JsonResponse({"status": "success", "message": "Sent to emulator"})
-    else:
-        return JsonResponse({"status": "error", "message": "Printer unavailable"}, status=503)
+def home_view(request):
+    return render(request, "orders/home.html")

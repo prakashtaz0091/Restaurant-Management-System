@@ -11,7 +11,7 @@ class HomeRedirectMiddleware:
         # handle before reaching to views
         if request.path == "/":
             if not request.user.is_authenticated:
-                return redirect("login_view_url")
+                return redirect("home_view")
             elif request.user.role == User.ROLE_CHOICES.WAITER:
                 return redirect("tables_view_url")
             elif request.user.role == User.ROLE_CHOICES.KITCHEN:
