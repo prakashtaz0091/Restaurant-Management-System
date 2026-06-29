@@ -59,13 +59,13 @@ def menu_view(request, table_id):
                 
         return redirect("tables_view_url")
     
-    
-    categories = Category.objects.all()
+    # select_related, prefetch_related
+    categories = Category.objects.prefetch_related("items")
     orders = Order.objects.filter(
         table_id=table_id
         ).exclude(
             status=Order.ORDER_STATUS.BILLED
-            ).order_by("-created_at")
+            ).prefetch_related("items__menu_item").select_related("table").order_by("-created_at")
         
     # print(orders)
     

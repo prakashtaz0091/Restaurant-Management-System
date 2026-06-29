@@ -102,7 +102,7 @@
 
                             <ul class="list-disc list-inside text-gray-700 space-y-1">
                                 {% for item in order.items.all %}
-                                <li>{{ item }} 
+                                <li>{{ item.menu_item.name }} 
                                     <span class="px-3 py-1 bg-green-300 text-sm">{{ item.get_status_display }}</span>
                                     
                                     {% if item.status == 'r' %}
