@@ -4,12 +4,17 @@ from orders.models import MenuItem, Table, Category
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import MenuItemSerializer, TableSerializer, CategorySerializer
+from rest_framework.pagination import LimitOffsetPagination
 
 
 class MenuItemViewset(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        
+        return MenuItem.objects.filter(purchaser=user)    
     
 class TableViewset(viewsets.ModelViewSet):
     queryset = Table.objects.all()
