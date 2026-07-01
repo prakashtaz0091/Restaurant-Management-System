@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "orders",
     "debug_toolbar",
     "rest_framework",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,11 @@ SESSION_COOKIE_AGE = 60*60*24*30 # 1 month in seconds
 
 MEDIA_ROOT = "media/"
 MEDIA_URL = "media/"
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    
+}
