@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: myproject
+      POSTGRES_USER: postgres
+       
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  
+  web:
+    build: .
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py create_tables && python manage.py create_basic_menuitems && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/myproject
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:
