@@ -12,7 +12,19 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-  
+
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: rustfs
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Admin UI (if supported)
+    volumes:
+      - rustfs_data:/data
+
   web:
     build: .
     env_file:
@@ -27,6 +39,8 @@ services:
     depends_on:
       - db
       - redis
+      - rustfs
 
 volumes:
   postgres_data:
+  rustfs_data:
