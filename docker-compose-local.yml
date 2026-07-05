@@ -1,10 +1,8 @@
 services:
   db:
     image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: myproject
-      POSTGRES_USER: postgres
-       
+    env_file:
+      - .env.local
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -17,6 +15,8 @@ services:
   
   web:
     build: .
+    env_file:
+      - .env.local
     command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py create_tables && python manage.py create_basic_menuitems && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
