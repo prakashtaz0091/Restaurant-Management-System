@@ -28,8 +28,8 @@ jobs:
     env:
       DB_HOST: localhost
       DB_PORT: 5432
-      DB_NAME: myproject
-      DB_USER: postgres
+      POSTGRES_DB: myproject
+      POSTGRES_USER: postgres
        
 
     steps:
