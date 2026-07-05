@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Django
+staticfiles/
+db.sqlite3
+
+
+# Environment / secrets
+.env
+.env.*
+
+# Version control
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Logs
+*.log

@@ -10,8 +10,9 @@ from urllib.parse import urlencode
 from django.db.models import Q,  Exists, OuterRef, F, Sum, DecimalField, ExpressionWrapper
 from django.http import JsonResponse
 from .utils import print_restaurant_receipt
-import pprint
 import decimal
+from django.views.decorators.cache import cache_page
+import time
 
 
 @role_required([User.ROLE_CHOICES.WAITER])
@@ -294,5 +295,8 @@ def billing_paid_view(request, table_id):
         return redirect("tables_for_billing_url")
     
 
+@cache_page(60 * 15)
 def home_view(request):
+    print("Raw view, waiting...")
+    time.sleep(5)
     return render(request, "orders/home.html")
