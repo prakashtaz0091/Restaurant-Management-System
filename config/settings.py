@@ -177,4 +177,13 @@ CELERY_TIMEZONE = 'UTC'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"          # or your provider's SMTP host
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True                    # use TLS (port 587)
+# EMAIL_USE_SSL = True                  # use this instead if using SSL (port 465) - don't set both
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")   # use an app password, not your real password
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
