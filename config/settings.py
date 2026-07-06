@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "rest_framework",
     "drf_yasg",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,37 @@ CACHES = {
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
     }
 }
+
+AWS_ACCESS_KEY_ID = os.getenv("RUSTFS_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = os.getenv("RUSTFS_SECRET_KEY")
+
+# Internal endpoint - container to container (Django -> RustFS)
+AWS_S3_ENDPOINT_URL = "http://rustfs:9000"
+
+AWS_S3_REGION_NAME = "us-east-1"
+AWS_S3_ADDRESSING_STYLE = "path"
+AWS_S3_URL_PROTOCOL = "http:"
+AWS_S3_CUSTOM_PRIVATE_MEDIA_DOMAIN = "localhost:9000/media"
+AWS_S3_CUSTOM_PUBLIC_MEDIA_DOMAIN = "localhost:9000/media-public"
+AWS_S3_CUSTOM_STATIC_DOMAIN = "localhost:9000/static"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "config.storages.PrivateMediaStorage"
+    },
+    "staticfiles": {
+        "BACKEND": "config.storages.StaticFileStorage"
+    },
+}
+
+# Celery
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

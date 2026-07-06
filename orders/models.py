@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from config import storages
 
 
 class Table(models.Model):
@@ -43,7 +44,7 @@ class MenuItem(models.Model):
     default_priority = models.CharField(choices=PRIORITY_CHOICES, default=PRIORITY_CHOICES.MEDIUM, max_length=2)
     est_time = models.PositiveIntegerField(help_text="Write estimated preparation time in minutes", null=True, blank=True)
     
-    image = models.ImageField(upload_to="menu_items", null=True, blank=True)
+    image = models.ImageField(upload_to="menu_items", null=True, blank=True, storage=storages.PublicMediaStorage())
     
     def __str__(self):
         return self.name
