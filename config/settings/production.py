@@ -178,6 +178,7 @@ DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 CSRF_TRUSTED_ORIGINS = [
     "https://rms.prakashtajpuriya.com.np",
+    "https://restaurant.prakashtajpuriya.com.np",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
