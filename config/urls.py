@@ -3,7 +3,6 @@ from django.urls import path, include
 from orders.views import home_view
 from django.conf import settings
 from django.conf.urls.static import static
-from debug_toolbar.toolbar import debug_toolbar_urls
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -46,4 +45,9 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
        
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + debug_toolbar_urls()
+]
+
+if settings.DEBUG:
+    from debug_toolbar.toolbar import debug_toolbar_urls
+
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + debug_toolbar_urls()

@@ -1,24 +1,31 @@
 services:
   db:
+    container_name: prod-db
     image: postgres:16-alpine
     env_file:
-      - .env.local
+      - .env.production
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d rms_project"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
+    container_name: prod-redis
     image: redis:7-alpine
     ports:
       - "6379:6379"
 
   rustfs:
     image: rustfs/rustfs:latest
-    container_name: rustfs
+    container_name: prod-rustfs
     restart: unless-stopped
     env_file:
-      - .env.local
+      - .env.production
     ports:
       - "9000:9000"   # S3 API
       - "9001:9001"   # Admin UI (if supported)
@@ -28,7 +35,8 @@ services:
   web:
     build: .
     env_file:
-      - .env.local
+      - .env.production
+    container_name: prod-web
     command: >
       sh -c "
       python manage.py migrate &&
@@ -40,14 +48,23 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/myproject
     depends_on:
       - db
       - redis
       - rustfs
 
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+      - rustfs
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
   worker:
+    container_name: prod-worker
     build: .
     command: celery -A config worker --loglevel=info
     volumes:
@@ -56,18 +73,21 @@ services:
       - db
       - redis
     env_file:
-      - .env.local
+      - .env.production
 
   beat:
+    container_name: prod-beat
     build: .
     command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - .:/app
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     env_file:
-      - .env.local
+      - .env.production
 
 volumes:
   postgres_data:

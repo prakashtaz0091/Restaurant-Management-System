@@ -1,0 +1,74 @@
+services:
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - .env.development
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: rustfs
+    restart: unless-stopped
+    env_file:
+      - .env.development
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Admin UI (if supported)
+    volumes:
+      - rustfs_data:/data
+
+  web:
+    build: .
+    env_file:
+      - .env.development
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py create_tables &&
+      python manage.py create_basic_menuitems &&
+      gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+      "
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/myproject
+    depends_on:
+      - db
+      - redis
+      - rustfs
+
+  worker:
+    build: .
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env.development
+
+  beat:
+    build: .
+    command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env.development
+
+volumes:
+  postgres_data:
+  rustfs_data:
