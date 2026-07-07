@@ -29,7 +29,13 @@ services:
     build: .
     env_file:
       - .env.local
-    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py create_tables && python manage.py create_basic_menuitems && python manage.py runserver 0.0.0.0:8000"
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py create_tables &&
+      python manage.py create_basic_menuitems &&
+      gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+      "
     volumes:
       - .:/app
     ports:

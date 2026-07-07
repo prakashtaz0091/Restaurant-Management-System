@@ -297,6 +297,6 @@ def billing_paid_view(request, table_id):
 
 @cache_page(60 * 15)
 def home_view(request):
-    print("Raw view, waiting...")
-    time.sleep(5)
+    # print("Raw view, waiting...")
+    # time.sleep(5)
     return render(request, "orders/home.html")

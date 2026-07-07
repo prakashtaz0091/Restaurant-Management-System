@@ -24,6 +24,7 @@ drf-yasg==1.21.15
 factory_boy==3.3.3
 Faker==40.28.1
 git-filter-repo==2.47.0
+gunicorn==26.0.0
 importlib_resources==7.1.0
 inflection==0.5.1
 jmespath==1.1.0
