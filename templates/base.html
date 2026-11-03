@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <title>
+        {% block title %}
+            Dummy title
+        {% endblock title %}
+    </title>
+
+  </head>
+  <body>
+
+
+        
+    <nav class="w-full bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">L</span>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">
+                        YAK<span class="text-blue-600">Hotel</span>
+                    </span>
+                </div>
+
+                <!-- Help & Contact -->
+                <div class="hidden md:flex items-center gap-8">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-800">
+                            Need Help?
+                        </p>
+                        <a href="#" class="text-sm text-gray-500 hover:text-blue-600">
+                            Visit Help Center
+                        </a>
+                    </div>
+
+                    <div class="h-10 border-l border-gray-200"></div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-gray-800">
+                            Contact Us
+                        </p>
+                        <a href="mailto:yak-hotel@gmail.com"
+                        class="text-sm text-gray-500 hover:text-blue-600">
+                            yak-hotel@gmail.com
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Search, Cart & Login -->
+                <div class="flex items-center gap-4">
+
+                    <!-- Search -->
+                    <div class="relative hidden sm:block">
+                        <input
+                            type="search"
+                            placeholder="Search..."
+                            class="w-40 lg:w-56 pl-10 pr-4 py-2
+                                text-sm border border-gray-300 rounded-lg
+                                focus:outline-none focus:ring-2
+                                focus:ring-blue-500"
+                        />
+
+                        <svg class="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
+                            fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="7" stroke-width="2"/>
+                            <path d="m16 16 4 4" stroke-width="2"/>
+                        </svg>
+                    </div>
+
+                    <!-- Cart -->
+                    <a href="/cart/"
+                    class="relative text-gray-600 hover:text-blue-600 transition"
+                    aria-label="Shopping cart">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-7 h-7"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="1.8">
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3 3h2l2.4 12.2a2 2 0 002 1.6h8.8a2 2 0 002-1.6L22 8H6"/>
+                            <circle cx="10" cy="21" r="1"/>
+                            <circle cx="18" cy="21" r="1"/>
+                        </svg>
+
+                        <!-- Cart Count -->
+                        <span id="cart-count"
+                            class="absolute -top-2 -right-2 bg-red-500
+                                    text-white text-xs font-bold
+                                    min-w-5 h-5 px-1 rounded-full
+                                    flex items-center justify-center">
+                            0
+                        </span>
+                    </a>
+
+                    <!-- Login -->
+                    <a href="/login"
+                    class="px-5 py-2.5 bg-blue-600 text-white
+                            text-sm font-medium rounded-lg
+                            hover:bg-blue-700 transition">
+                        Login
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        function updateCartCount() {
+            const cart = JSON.parse(
+                localStorage.getItem("menuCart") || "[]"
+            );
+
+            document.getElementById("cart-count").textContent = cart.length;
+        }
+
+        document.addEventListener("DOMContentLoaded", updateCartCount);
+
+        // Update when localStorage changes in another tab
+        window.addEventListener("storage", updateCartCount);
+    </script>
+
+
+
+
+    {% block content %}
+    <h1 class="text-3xl font-bold underline">
+      Hello world!
+    </h1>
+    {% endblock content %}
+  </body>
+</html>

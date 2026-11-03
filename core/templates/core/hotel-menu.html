@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Menu | Yak-Hotel{% endblock title %}
+
+{% block content %}
+
+<section class="max-w-7xl mx-auto px-4 py-10">
+
+    <!-- Menu Header -->
+    <div class="text-center mb-8">
+        <p class="text-blue-600 font-semibold uppercase tracking-widest text-xs">
+            Our Delicious Food
+        </p>
+        <h1 class="text-3xl font-bold text-gray-900 mt-2">
+            Explore Our Menu
+        </h1>
+        <p class="text-gray-500 text-sm mt-2">
+            Fresh ingredients, delicious flavors.
+        </p>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+
+        {% for item in menu_items %}
+
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden
+                    hover:shadow-lg transition duration-300 group">
+
+            <!-- Food Image -->
+            <div class="h-36 overflow-hidden bg-gray-100">
+                {% if item.image %}
+                    <img
+                        src="{{ item.image.url }}"
+                        alt="{{ item.name }}"
+                        class="w-full h-full object-cover
+                               group-hover:scale-105 transition duration-300"
+                    >
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center
+                                text-gray-400 text-sm">
+                        No Image
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Card Content -->
+            <div class="p-3">
+
+                <!-- Name & Price -->
+                <div class="flex items-start justify-between gap-2">
+                    <h2 class="text-sm font-semibold text-gray-800 line-clamp-2">
+                        {{ item.name }}
+                    </h2>
+
+                    <span class="text-sm font-bold text-blue-600 whitespace-nowrap">
+                        Rs. {{ item.price|floatformat:2 }}
+                    </span>
+                </div>
+
+                <!-- Description -->
+                <p class="text-xs text-gray-500 mt-2 line-clamp-2">
+                    {{ item.description|default:"Delicious and freshly prepared." }}
+                </p>
+
+                <!-- Order Button -->
+               <button
+                    type="button"
+                    data-add-to-cart
+                    data-id="{{ item.id }}"
+                    data-name="{{ item.name }}"
+                    data-price="{{ item.price }}"
+                    class="w-full mt-4 py-2 bg-blue-600 text-white
+                        text-xs font-semibold rounded-lg hover:bg-blue-700 transition">
+                    Add
+                </button>
+
+            </div>
+        </div>
+
+        {% empty %}
+
+        <div class="col-span-full text-center py-12">
+            <p class="text-gray-500 text-sm">
+                No menu items available.
+            </p>
+        </div>
+
+        {% endfor %}
+
+    </div>
+</section>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const buttons = document.querySelectorAll("[data-add-to-cart]");
+
+        buttons.forEach(button => {
+
+            button.addEventListener("click", function () {
+
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const price = this.dataset.price;
+
+                // Get existing cart
+                let cart = JSON.parse(
+                    localStorage.getItem("menuCart") || "[]"
+                );
+
+                // Find existing item
+                const existingItem = cart.find(item => item.id === id);
+
+                if (existingItem) {
+                    // Increase quantity
+                    existingItem.quantity += 1;
+                } else {
+                    // Add new item
+                    cart.push({
+                        id: id,
+                        name: name,
+                        price: price,
+                        quantity: 1
+                    });
+                }
+
+                // Save cart
+                localStorage.setItem("menuCart", JSON.stringify(cart));
+
+                // Update navbar cart count
+                updateCartCount();
+
+                // Visual feedback
+                const originalText = this.textContent;
+                this.textContent = "Added!";
+                this.classList.replace("bg-blue-600", "bg-green-600");
+
+                setTimeout(() => {
+                    this.textContent = originalText;
+                    this.classList.replace("bg-green-600", "bg-blue-600");
+                }, 1000);
+
+                console.log("Cart:", cart);
+
+            });
+
+        });
+
+    });
+
+</script>
+
+{% endblock content %}
