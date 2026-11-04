@@ -4,7 +4,8 @@ from django.urls import path
 from core.views import (home_view, 
                         about_view, 
                         menu_view, 
-                        cart_view
+                        cart_view,
+                        order_view,
                         )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -13,8 +14,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home_view),
     path("about-us/", about_view),
-    path("hotel-menu/", menu_view),
+    path("hotel-menu/tables/<table_id>/", menu_view),
     path("cart/", cart_view),
+    path("order/", order_view),
 ]
 
 if settings.DEBUG:

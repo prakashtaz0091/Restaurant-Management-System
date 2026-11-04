@@ -92,6 +92,8 @@
                         </span>
                     </div>
                 </div>
+                
+                
 
                 <!-- Checkout -->
                 <button
@@ -304,14 +306,70 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Checkout
-    checkoutBtn.addEventListener("click", function () {
+    checkoutBtn.addEventListener("click", async function () {
 
         if (cart.length === 0) return;
 
-        window.location.href = "/checkout/";
+        const menuCart = localStorage.getItem("menuCart") || "[]";
+        const table_id = localStorage.getItem("table_id");
 
+        const formData = new FormData();
+        formData.append("menuCart", menuCart);
+        formData.append("table_id", table_id);
+
+        try {
+            const response = await fetch("/order/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error("Order submission failed");
+            }
+
+            checkoutBtn.innerText = "Ordered"
+            checkoutBtn.disabled = true
+            const res_data = await response.json()
+            const existingOrders = JSON.parse(localStorage.getItem("orders")) || []
+            existingOrders.push(res_data.order_id)
+
+
+            localStorage.setItem("orders", JSON.stringify(existingOrders))
+            localStorage.removeItem("menuCart")
+
+            window.location.href = "/"
+
+        } catch (error) {
+            console.error("Checkout error:", error);
+            alert("Unable to process your order. Please try again.");
+        }
     });
 
+    // Django CSRF helper
+    function getCookie(name) {
+        let cookieValue = null;
+
+        if (document.cookie) {
+            const cookies = document.cookie.split(";");
+
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(
+                        cookie.substring(name.length + 1)
+                    );
+                    break;
+                }
+            }
+        }
+
+        return cookieValue;
+    }
+    
     // Sync changes from other tabs
     window.addEventListener("storage", function (event) {
 

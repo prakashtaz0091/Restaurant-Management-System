@@ -95,6 +95,8 @@
 
     document.addEventListener("DOMContentLoaded", function () {
 
+        localStorage.setItem("table_id", {{table_id}})
+
         const buttons = document.querySelectorAll("[data-add-to-cart]");
 
         buttons.forEach(button => {
