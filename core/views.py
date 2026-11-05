@@ -79,6 +79,14 @@ def order_view(request):
         })
     
 
+def order_status_view(request, order_id):
+    order = Order.objects.get(id=order_id)
+
+    return JsonResponse({
+        'order_id': order.id,
+        'status': order.status,
+        'status_display': order.get_status_display()
+    })
     
 
     

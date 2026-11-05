@@ -6,6 +6,7 @@ from core.views import (home_view,
                         menu_view, 
                         cart_view,
                         order_view,
+                        order_status_view,
                         )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -17,6 +18,7 @@ urlpatterns = [
     path("hotel-menu/tables/<table_id>/", menu_view, name="menu-page"),
     path("cart/", cart_view, name="cart-page"),
     path("order/", order_view, name="order-page"),
+    path("order/status/<order_id>/", order_status_view, name="order-status-api"),
 ]
 
 if settings.DEBUG:

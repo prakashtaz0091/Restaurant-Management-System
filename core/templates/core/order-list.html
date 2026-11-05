@@ -46,36 +46,14 @@
 
                 <!-- Order Status -->
                 <div>
-                    {% if order.status == 'completed' %}
-                        <span class="px-3 py-1 text-xs font-semibold
-                                     rounded-full bg-green-100 text-green-700">
-                            Completed
-                        </span>
-
-                    {% elif order.status == 'pending' %}
-                        <span class="px-3 py-1 text-xs font-semibold
-                                     rounded-full bg-yellow-100 text-yellow-700">
-                            Pending
-                        </span>
-
-                    {% elif order.status == 'processing' %}
-                        <span class="px-3 py-1 text-xs font-semibold
-                                     rounded-full bg-blue-100 text-blue-700">
-                            Processing
-                        </span>
-
-                    {% elif order.status == 'cancelled' %}
-                        <span class="px-3 py-1 text-xs font-semibold
-                                     rounded-full bg-red-100 text-red-700">
-                            Cancelled
-                        </span>
-
-                    {% else %}
-                        <span class="px-3 py-1 text-xs font-semibold
-                                     rounded-full bg-gray-100 text-gray-600">
-                            {{ order.status|title }}
-                        </span>
-                    {% endif %}
+                    <span
+                        class="order-status px-3 py-1 text-xs font-semibold rounded-full"
+                        data-order-id="{{ order.id }}"
+                        data-status-url="{% url 'order-status-api' order.id %}"
+                        data-status="{{ order.status }}"
+                    >
+                        {{ order.get_status_display }}
+                    </span>
                 </div>
 
             </div>
@@ -192,6 +170,96 @@
     </div>
 
 </section>
+
+
+<script>
+
+    const statusStyles = {
+        'p': 'bg-yellow-100 text-yellow-700',
+        'r': 'bg-blue-100 text-blue-700',
+        's': 'bg-green-100 text-green-700'
+    };
+
+    async function updateOrderStatus(element) {
+
+        const apiUrl = element.dataset.statusUrl;
+
+        try {
+
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                cache: 'no-store'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch order status');
+            }
+
+            const data = await response.json();
+
+            const newStatus = data.status;
+            const oldStatus = element.dataset.status;
+
+            // Skip if status hasn't changed
+            if (newStatus === oldStatus) {
+                return;
+            }
+
+            // Update status text
+            element.textContent = data.status_display;
+
+            // Update stored status
+            element.dataset.status = newStatus;
+
+            // Update badge color
+            element.className =
+                'order-status px-3 py-1 text-xs font-semibold rounded-full ' +
+                (statusStyles[newStatus] || 'bg-gray-100 text-gray-600');
+
+        } catch (error) {
+
+            console.error(
+                `Error updating order ${element.dataset.orderId}:`,
+                error
+            );
+
+        }
+    }
+
+
+    async function refreshOrderStatuses() {
+
+        const elements = document.querySelectorAll('.order-status');
+
+        await Promise.all(
+            Array.from(elements).map(element =>
+                updateOrderStatus(element)
+            )
+        );
+    }
+
+
+    async function startOrderPolling() {
+
+        await refreshOrderStatuses();
+
+        async function poll() {
+
+            if (!document.hidden) {
+                await refreshOrderStatuses();
+            }
+
+            setTimeout(poll, 5000);
+        }
+
+        setTimeout(poll, 5000);
+    }
+
+
+    document.addEventListener('DOMContentLoaded', startOrderPolling);
+
+</script>
+
 
 
 {% endblock content %}
