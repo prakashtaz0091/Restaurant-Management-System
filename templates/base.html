@@ -77,7 +77,7 @@
                     </div>
 
                     <!-- Cart -->
-                    <a href="/cart/"
+                    <a href="{% url 'cart-page' %}"
                     class="relative text-gray-600 hover:text-blue-600 transition"
                     aria-label="Shopping cart">
 
@@ -103,7 +103,32 @@
                             0
                         </span>
                     </a>
+                    <!-- Cart -->
+                    <a href="{% url 'order-page' %}"
+                    class="relative text-gray-600 hover:text-blue-600 transition"
+                    aria-label="Orders">
 
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-7 h-7"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="1.8">
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6M9 16h6"/>
+                        </svg>
+
+                        <!-- Cart Count -->
+                        <span id="cart-count"
+                            class="absolute -top-2 -right-2 bg-red-500
+                                    text-white text-xs font-bold
+                                    min-w-5 h-5 px-1 rounded-full
+                                    flex items-center justify-center">
+                            0
+                        </span>
+                    </a>
+                    
                     <!-- Login -->
                     <a href="/login"
                     class="px-5 py-2.5 bg-blue-600 text-white

@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Orders{% endblock title %}
+
+{% block content %}
+
+
+<section class="max-w-5xl mx-auto px-4 py-10">
+
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Your Orders</h1>
+        <p class="text-sm text-gray-500 mt-2">
+            Track and review your previous orders.
+        </p>
+    </div>
+
+    <!-- Order Count -->
+    <div class="mb-5">
+        <h2 class="font-semibold text-gray-800">
+            Order History ({{ orders|length }})
+        </h2>
+    </div>
+
+    <!-- Orders List -->
+    <div class="space-y-6">
+
+        {% for order in orders %}
+
+        <!-- Individual Order Card -->
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+
+            <!-- Order Header -->
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200
+                        flex flex-wrap justify-between items-center gap-3">
+
+                <div>
+                    <p class="text-xs text-gray-400">
+                        ORDER #{{ order.id }}
+                    </p>
+
+                    <p class="text-sm font-medium text-gray-800 mt-1">
+                        {{ order.created_at|date:"M d, Y - h:i A" }}
+                    </p>
+                </div>
+
+                <!-- Order Status -->
+                <div>
+                    {% if order.status == 'completed' %}
+                        <span class="px-3 py-1 text-xs font-semibold
+                                     rounded-full bg-green-100 text-green-700">
+                            Completed
+                        </span>
+
+                    {% elif order.status == 'pending' %}
+                        <span class="px-3 py-1 text-xs font-semibold
+                                     rounded-full bg-yellow-100 text-yellow-700">
+                            Pending
+                        </span>
+
+                    {% elif order.status == 'processing' %}
+                        <span class="px-3 py-1 text-xs font-semibold
+                                     rounded-full bg-blue-100 text-blue-700">
+                            Processing
+                        </span>
+
+                    {% elif order.status == 'cancelled' %}
+                        <span class="px-3 py-1 text-xs font-semibold
+                                     rounded-full bg-red-100 text-red-700">
+                            Cancelled
+                        </span>
+
+                    {% else %}
+                        <span class="px-3 py-1 text-xs font-semibold
+                                     rounded-full bg-gray-100 text-gray-600">
+                            {{ order.status|title }}
+                        </span>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- Order Items -->
+            <div class="px-6 py-5">
+
+                <h3 class="text-sm font-semibold text-gray-800 mb-4">
+                    Ordered Items
+                </h3>
+
+                <div class="space-y-4">
+
+                    {% for item in order.orderitem_set.all %}
+
+                    <div class="flex justify-between items-center gap-4">
+
+                        <!-- Item Details -->
+                        <div class="flex-1 min-w-0">
+
+                            <p class="text-sm font-medium text-gray-900">
+                                {{ item.menuitem.name }}
+                            </p>
+
+                            <p class="text-xs text-gray-500 mt-1">
+                                Rs. {{ item.menuitem.price|floatformat:2 }}
+                                × {{ item.quantity }}
+                            </p>
+
+                        </div>
+
+                        <!-- Item Total -->
+                        <div class="text-sm font-semibold text-gray-800
+                                    whitespace-nowrap">
+                            Rs. {{ item.total|floatformat:2 }}
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <!-- Order Total -->
+                <div class="border-t border-gray-200 mt-5 pt-4">
+
+                    <div class="flex justify-between items-center">
+
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">
+                                Order Total
+                            </p>
+
+                            <p class="text-xs text-gray-500 mt-1">
+                                {{ order.orderitem_set.count }} item(s)
+                            </p>
+                        </div>
+
+                        <p class="text-xl font-bold text-blue-600">
+                            Rs. {{ order.total|floatformat:2 }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <!-- Empty Orders -->
+        <div class="bg-white border border-gray-200 rounded-xl
+                    text-center py-16 px-6">
+
+            <div class="flex justify-center mb-4">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="w-16 h-16 text-gray-300"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor"
+                     stroke-width="1.3">
+
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 12h6M9 16h6"/>
+
+                </svg>
+
+            </div>
+
+            <h3 class="text-lg font-semibold text-gray-800">
+                No orders yet
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-2">
+                You haven't placed any orders yet.
+                Explore our menu and enjoy delicious dishes.
+            </p>
+
+            <a href="{% url 'menu-page' table_id %}"
+               class="inline-block mt-5 px-5 py-2 bg-blue-600
+                      text-white text-sm rounded-lg
+                      hover:bg-blue-700 transition">
+                Explore Menu
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+{% endblock content %}

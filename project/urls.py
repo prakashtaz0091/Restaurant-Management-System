@@ -14,9 +14,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home_view),
     path("about-us/", about_view),
-    path("hotel-menu/tables/<table_id>/", menu_view),
-    path("cart/", cart_view),
-    path("order/", order_view),
+    path("hotel-menu/tables/<table_id>/", menu_view, name="menu-page"),
+    path("cart/", cart_view, name="cart-page"),
+    path("order/", order_view, name="order-page"),
 ]
 
 if settings.DEBUG:

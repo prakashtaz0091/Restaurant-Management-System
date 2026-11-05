@@ -46,7 +46,7 @@
                         Add some delicious dishes to get started.
                     </p>
 
-                    <a href="/"
+                    <a href="{% url 'menu-page' table_id %}"
                        class="inline-block mt-5 px-5 py-2 bg-blue-600
                               text-white text-sm rounded-lg hover:bg-blue-700">
                         Explore Menu
@@ -120,6 +120,8 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
+
 
     const cartContainer = document.getElementById("cart-items");
     const emptyCart = document.getElementById("empty-cart");
@@ -340,7 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem("orders", JSON.stringify(existingOrders))
             localStorage.removeItem("menuCart")
 
-            window.location.href = "/"
+            window.location.href = "{% url 'menu-page' table_id %}"
 
         } catch (error) {
             console.error("Checkout error:", error);
