@@ -1,0 +1,174 @@
+
+{% extends "base.html" %}
+{% block title %}Signup | YAKHotel{% endblock title %}
+
+{% block content %}
+
+<div class="min-h-[calc(100vh-80px)] bg-gray-50 flex items-center justify-center px-4 py-12">
+
+    <div class="w-full max-w-md">
+
+        <!-- Signup Card -->
+        <div class="bg-white border border-gray-200 shadow-sm rounded-2xl p-8 sm:p-10">
+
+            <!-- Logo -->
+            <div class="flex items-center justify-center gap-2 mb-8">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">L</span>
+                </div>
+
+                <span class="text-2xl font-bold text-gray-800">
+                    YAK<span class="text-blue-600">Hotel</span>
+                </span>
+            </div>
+
+            <!-- Heading -->
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-800">
+                    Create an Account
+                </h1>
+
+                <p class="text-sm text-gray-500 mt-2">
+                    Sign up to start booking your favorite stays
+                </p>
+            </div>
+
+            <!-- Signup Form -->
+            <form method="POST"
+                  action="{% url 'signup-page' %}"
+                  id="signupForm"
+                  class="space-y-5">
+
+                {% csrf_token %}
+
+                {{ form }}
+
+                <!-- Signup Button -->
+                <button
+                    type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700
+                    text-white font-semibold py-3 rounded-lg
+                    transition duration-200 shadow-sm">
+
+                    Create Account
+
+                </button>
+
+            </form>
+
+            <!-- Login Link -->
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-500">
+                    Already have an account?
+
+                    <a href="{% url 'login-page' %}"
+                       class="font-semibold text-blue-600 hover:text-blue-700 transition">
+                        Login
+                    </a>
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <p class="text-center text-xs text-gray-400 mt-6">
+            &copy; {% now "Y" %} YAKHotel. All rights reserved.
+        </p>
+
+    </div>
+
+</div>
+
+<!-- Password Toggle & Validation -->
+<script>
+
+    // Show / Hide Password
+    document.querySelectorAll(".password-toggle").forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            const targetId = this.dataset.target;
+            const passwordInput = document.getElementById(targetId);
+
+            const isPassword = passwordInput.type === "password";
+
+            passwordInput.type = isPassword ? "text" : "password";
+
+            this.setAttribute("aria-pressed", String(isPassword));
+
+            this.setAttribute(
+                "aria-label",
+                isPassword ? "Hide password" : "Show password"
+            );
+
+            this.innerHTML = isPassword
+                ? `<svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8
+                    M9.9 5.2A10.7 10.7 0 0112 5
+                    c6.25 0 9.75 7 9.75 7
+                    s-1.2 2.4-3.5 4.5
+                    M6.2 6.2C3.7 7.8 2.25 12 2.25 12
+                    s3.5 7 9.75 7c.9 0 1.7-.15 2.5-.4"/>
+                    </svg>`
+                : `<svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M2.25 12s3.5-7 9.75-7
+                    9.75 7 9.75 7-3.5 7-9.75 7
+                    S2.25 12 2.25 12z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    </svg>`;
+
+        });
+
+    });
+
+
+    // Confirm Password Validation
+    const signupForm = document.getElementById("signupForm");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirm_password");
+    const passwordError = document.getElementById("passwordError");
+
+    function validatePassword() {
+
+        if (confirmPassword.value === "") {
+            passwordError.classList.add("hidden");
+            confirmPassword.setCustomValidity("");
+            return;
+        }
+
+        const isMatch = password.value === confirmPassword.value;
+
+        passwordError.classList.toggle("hidden", isMatch);
+
+        confirmPassword.setCustomValidity(
+            isMatch ? "" : "Passwords do not match."
+        );
+
+    }
+
+    password.addEventListener("input", validatePassword);
+
+    confirmPassword.addEventListener("input", validatePassword);
+
+    signupForm.addEventListener("submit", function (event) {
+
+        validatePassword();
+
+        if (!signupForm.checkValidity()) {
+            event.preventDefault();
+            signupForm.reportValidity();
+        }
+
+    });
+
+</script>
+
+{% endblock %}

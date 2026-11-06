@@ -15,6 +15,132 @@
   <body>
 
 
+    <!-- Toast Notifications -->
+    <div id="toast-container"
+        class="fixed top-5 right-5 z-[9999] w-[calc(100%-2.5rem)] max-w-sm space-y-3">
+
+        {% if messages %}
+            {% for message in messages %}
+
+                <div class="toast-message flex items-center gap-3 p-4 rounded-xl
+                    bg-white border shadow-lg
+                    translate-x-0 opacity-100 transition-all duration-500
+                    {% if message.tags == 'success' %}
+                        border-green-200
+                    {% elif message.tags == 'error' %}
+                        border-red-200
+                    {% elif message.tags == 'warning' %}
+                        border-yellow-200
+                    {% else %}
+                        border-blue-200
+                    {% endif %}
+                ">
+
+                    <!-- Icon -->
+                    <div class="shrink-0">
+
+                        {% if message.tags == 'success' %}
+                            <svg class="w-6 h-6 text-green-500"
+                                fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M5 13l4 4L19 7"/>
+                            </svg>
+
+                        {% elif message.tags == 'error' %}
+                            <svg class="w-6 h-6 text-red-500"
+                                fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+
+                        {% elif message.tags == 'warning' %}
+                            <svg class="w-6 h-6 text-yellow-500"
+                                fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 9v4m0 4h.01M10.3 3.9L2.6 17.2
+                                    A2 2 0 004.3 20h15.4a2 2 0 001.7-2.8
+                                    L13.7 3.9a2 2 0 00-3.4 0z"/>
+                            </svg>
+
+                        {% else %}
+                            <svg class="w-6 h-6 text-blue-500"
+                                fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01
+                                    M12 22a10 10 0 110-20 10 10 0 010 20z"/>
+                            </svg>
+                        {% endif %}
+
+                    </div>
+
+                    <!-- Message -->
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-800">
+                            {{ message }}
+                        </p>
+                    </div>
+
+                    <!-- Close Button -->
+                    <button type="button"
+                            class="toast-close text-gray-400 hover:text-gray-700
+                            transition shrink-0"
+                            aria-label="Close notification">
+
+                        <svg class="w-5 h-5"
+                            fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+
+                    </button>
+
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+    <!-- Toast Animation & Auto Dismiss -->
+    <script>
+        document.querySelectorAll(".toast-message").forEach(toast => {
+
+            let dismissTimer;
+
+            function dismissToast() {
+                clearTimeout(dismissTimer);
+
+                toast.classList.add("translate-x-full", "opacity-0");
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }
+
+            // Auto dismiss after 4 seconds
+            dismissTimer = setTimeout(dismissToast, 4000);
+
+            // Manual close
+            toast.querySelector(".toast-close").addEventListener("click", dismissToast);
+
+        });
+    </script>
+
         
     <nav class="w-full bg-white border-b border-gray-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -129,13 +255,23 @@
                         </span>
                     </a>
                     
+                    {% if request.user.is_authenticated %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button class="px-5 py-2.5 bg-red-600 text-white
+                            text-sm font-medium rounded-lg
+                            hover:bg-red-700 transition" >Logout</button>
+                    </form>
+
+                    {% else %}
                     <!-- Login -->
-                    <a href="/login"
+                    <a href="{% url 'login-page' %}"
                     class="px-5 py-2.5 bg-blue-600 text-white
                             text-sm font-medium rounded-lg
                             hover:bg-blue-700 transition">
                         Login
                     </a>
+                    {% endif %}
 
                 </div>
             </div>
