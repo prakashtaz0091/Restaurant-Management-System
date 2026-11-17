@@ -256,7 +256,7 @@
                     </a>
                     
                     {% if request.user.is_authenticated %}
-                    <form method="POST">
+                    <form method="POST" action="{% url 'logout-page' %}">
                         {% csrf_token %}
                         <button class="px-5 py-2.5 bg-red-600 text-white
                             text-sm font-medium rounded-lg

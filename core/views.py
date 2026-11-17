@@ -1,8 +1,12 @@
-from django.shortcuts import render
-from .models import MenuItem, Order, OrderItem
+from django.shortcuts import render, redirect
+from .models import MenuItem, Order, OrderItem, Payment
 import json
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
+from django.contrib import messages
+import requests
+from django.urls import reverse   
+
 
 def home_view(request):
     return render(request, "core/home.html")
@@ -88,5 +92,54 @@ def order_status_view(request, order_id):
         'status_display': order.get_status_display()
     })
     
+
+def payment_view(request):
+    if request.method == "POST":
+        order_id = request.POST.get('order_id')
+        try:
+            order = Order.objects.get(pk=order_id)
+        except Order.DoesNotExist:
+            messages.error(request, "Payment initiation failed")
+            return redirect("order-page")
+        
+        payment, created = Payment.objects.get_or_create(
+            order = order,
+            defaults={
+                "amount": order.total*100
+            }
+        )
+        
+        url = "https://dev.khalti.com/api/v2/epayment/initiate/"
+        return_url = request.build_absolute_uri(reverse('payment_confirm_view'))
+
+        payload = json.dumps({
+            "return_url": return_url,
+            "website_url": "https://example.com/",
+            "amount": str(payment.amount),
+            "purchase_order_id": str(payment.id),
+            "purchase_order_name": "test",
+            "customer_info": {
+            "name": "Ram Bahadur",
+            "email": "test@khalti.com",
+            "phone": "9800000001"
+            }
+        })
+        headers = {
+            'Authorization': 'key ',
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        data = response.json()
+        payment.pidx = data.get('pidx')
+        payment.save()
+        
+        return redirect(data.get('payment_url'))
+        
+        
+def payment_confirm_view(request):
+    print("Payment done, let's confirm it")
+    pass        
+
 
     

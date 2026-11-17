@@ -98,7 +98,7 @@
                 </div>
 
                 <!-- Order Total -->
-                <div class="border-t border-gray-200 mt-5 pt-4">
+                <div class="border-t border-gray-200 mt-5 mb-5  pt-4">
 
                     <div class="flex justify-between items-center">
 
@@ -112,13 +112,24 @@
                             </p>
                         </div>
 
-                        <p class="text-xl font-bold text-blue-600">
+                        <div>
+                            <p class="text-xl font-bold text-blue-600">
                             Rs. {{ order.total|floatformat:2 }}
-                        </p>
+                            </p>
+                            
+                        </div>
 
                     </div>
 
                 </div>
+
+                <form action="{% url 'payment_view' %}" method="post">
+                                {% csrf_token %}
+                                <input  type="hidden" name="order_id" value="{{order.id}}">
+                                <button class="w-full px-5 py-2.5 bg-green-600 text-white
+                            text-sm font-medium rounded-lg
+                            hover:bg-green-700 transition">Pay Now</button>
+                </form>
 
             </div>
 

@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 
 class MenuItem(models.Model):
@@ -45,4 +46,21 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.menuitem} x {self.quantity} = {self.total}"
     
+
+class Payment(models.Model):
+    class STATUS(models.TextChoices):
+        COMPLETE = 'c', 'Complete'
+        PENDING = 'p', 'Pending'
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    amount = models.IntegerField(default=0, help_text="(in paisa)")
+    order = models.OneToOneField(Order, on_delete=models.PROTECT, related_name="payment")
+    status = models.CharField(max_length=1, choices=STATUS, default=STATUS.PENDING)
+    
+    #khalti_fields
+    pidx = models.CharField(max_length=200, null=True)
+    
+    def __str__(self):
+        return self.id
+
     

@@ -4,6 +4,12 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
+
+def logout_view(request):
+    logout(request)
+    return redirect("login-page")
+
+
 def login_view(request):
     if request.method == "POST":
         email = request.POST.get('email')
