@@ -74,7 +74,7 @@ def order_view(request):
     else:
         table_id = request.session['table_id']
         # for order_id in request.session.get('order_ids'):
-        orders = Order.objects.filter(id__in=request.session.get('order_ids'))
+        orders = Order.objects.filter(id__in=request.session.get('order_ids')).order_by('-created_at')
         
         
         return render(request, "core/order-list.html", {
@@ -138,8 +138,35 @@ def payment_view(request):
         
         
 def payment_confirm_view(request):
-    print("Payment done, let's confirm it")
-    pass        
+    url = "https://dev.khalti.com/api/v2/epayment/lookup/"
+    payload = json.dumps({
+        "pidx": request.GET.get('pidx')
+    })
+    headers = {
+        'Authorization': 'key ',
+        'Content-Type': 'application/json',
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    data = response.json()
+    amount = data.get('total_amount')
+    status = data.get('status')
+    pidx = data.get('pidx')
+    
+    try:
+        payment = Payment.objects.get(pidx=pidx)
+    except Payment.DoesNotExist:
+        messages.error(request, "Payment reference doesn't exist. Please contact administrator")
+    else:
+        if status == "Completed" and amount == payment.amount:
+            payment.status = Payment.STATUS.COMPLETE
+            payment.save()
+            messages.success(request, "Payment success for order")
+        else:
+            messages.success(request, "Payment failed")
+            
+             
+    return redirect("order-page")
 
 
     

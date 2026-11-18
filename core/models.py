@@ -58,7 +58,7 @@ class Payment(models.Model):
     status = models.CharField(max_length=1, choices=STATUS, default=STATUS.PENDING)
     
     #khalti_fields
-    pidx = models.CharField(max_length=200, null=True)
+    pidx = models.CharField(max_length=200, null=True, unique=True)
     
     def __str__(self):
         return self.id
