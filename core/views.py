@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 import requests
 from django.urls import reverse   
+from django.conf import settings
 
 
 def home_view(request):
@@ -125,7 +126,7 @@ def payment_view(request):
             }
         })
         headers = {
-            'Authorization': 'key ',
+            'Authorization': f'key {settings.KHALTI_SECRET_KEY}',
             'Content-Type': 'application/json',
         }
 
@@ -143,7 +144,7 @@ def payment_confirm_view(request):
         "pidx": request.GET.get('pidx')
     })
     headers = {
-        'Authorization': 'key ',
+        'Authorization': f'key {settings.KHALTI_SECRET_KEY}',
         'Content-Type': 'application/json',
     }
 
