@@ -1,15 +1,27 @@
 from django import forms
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
+ALLOWED_EMAIL_DOMAINS = {
+    'gmail.com',
+    'yahoo.com',
+}
 
-from django import forms
-from django.contrib.auth.password_validation import validate_password
+def validate_email_domain(value):
+    domain = value.rsplit('@', 1)[-1].lower()
 
-
+    if domain not in ALLOWED_EMAIL_DOMAINS:
+        raise ValidationError(
+            'Please use a Gmail or Yahoo email address.',
+            code='invalid_domain',
+        )
+        
+        
 class SignupForm(forms.Form):
 
     email = forms.EmailField(
         required=True,
+        validators=[validate_email_domain],
         widget=forms.EmailInput(attrs={
             'id': 'email',
             'placeholder': 'Enter your email',
@@ -24,6 +36,7 @@ class SignupForm(forms.Form):
         error_messages={
             'required': 'Email is required.',
             'invalid': 'Enter a valid email address.',
+            'invalid_domain': f"Only emails from {','.join(ALLOWED_EMAIL_DOMAINS)} are allowed"
         }
     )
 
