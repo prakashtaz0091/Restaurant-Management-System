@@ -7,6 +7,8 @@ from django.contrib import messages
 import requests
 from django.urls import reverse   
 from django.conf import settings
+from .services import LoyaltyPoint
+from accounts.models import Wallet
 
 
 def home_view(request):
@@ -39,7 +41,6 @@ def cart_view(request):
 def order_view(request):
     if request.method == "POST":
         menu_cart = json.loads(request.POST.get("menuCart"))
-        
         
         # print("menu cart", type(menu_cart))
         table_id = request.POST.get("table_id")
@@ -97,16 +98,30 @@ def order_status_view(request, order_id):
 def payment_view(request):
     if request.method == "POST":
         order_id = request.POST.get('order_id')
+        
         try:
             order = Order.objects.get(pk=order_id)
         except Order.DoesNotExist:
             messages.error(request, "Payment initiation failed")
             return redirect("order-page")
         
+        use_points = request.POST.get('use-points')
+        
+        if use_points:
+            wallet = request.user.wallet
+            paisa = LoyaltyPoint.calculate_paisa(wallet.loyalty_points)
+            wallet.loyalty_points = 0
+            wallet.save()
+        else:
+            paisa = 0    
+        
+        # return
+        
+        
         payment, created = Payment.objects.get_or_create(
             order = order,
             defaults={
-                "amount": order.total*100
+                "amount": order.total*100 - paisa
             }
         )
         
@@ -163,6 +178,13 @@ def payment_confirm_view(request):
             payment.status = Payment.STATUS.COMPLETE
             payment.save()
             messages.success(request, "Payment success for order")
+            points = LoyaltyPoint.calculate(payment)
+            wallet, created = Wallet.objects.get_or_create(
+                user = request.user
+            )
+            wallet.loyalty_points += points
+            wallet.save()
+            messages.success(request, f"{points} loyalty points added to wallet")
         else:
             messages.success(request, "Payment failed")
             

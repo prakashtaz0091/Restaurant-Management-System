@@ -61,6 +61,6 @@ class Payment(models.Model):
     pidx = models.CharField(max_length=200, null=True, unique=True)
     
     def __str__(self):
-        return self.id
+        return str(self.id)
 
     
