@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     "core",
     "accounts",
     
+    'background_task',
+    
 ]
 
 MIDDLEWARE = [
