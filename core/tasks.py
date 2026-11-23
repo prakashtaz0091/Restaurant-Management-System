@@ -1,8 +1,9 @@
-from background_task import background
+# from background_task import background
 from .services import analyse_popular_items
+from celery import shared_task
 
 
-@background(schedule=0)
+@shared_task
 def udpate_popular_menu_items():
     print("------Updating popular items-------")
     analyse_popular_items()
