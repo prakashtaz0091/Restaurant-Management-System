@@ -16,6 +16,7 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
+    path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", admin.site.urls),
     path("", home_view, name="home-page"),
     path("about-us/", about_view),

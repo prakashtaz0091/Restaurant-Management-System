@@ -255,6 +255,29 @@
                             0
                         </span>
                     </a>
+
+                    <!-- Language Switcher -->
+                    <form action="{% url 'set_language' %}" method="post" class="flex items-center">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+
+                        <select name="language"
+                                onchange="this.form.submit()"
+                                class="border border-gray-300 rounded-lg px-3 py-2 text-sm
+                                    text-gray-700 bg-white focus:outline-none
+                                    focus:ring-2 focus:ring-blue-500 cursor-pointer">
+
+                            {% for language in languages %}
+                                <option value="{{ language.code }}"
+                                    {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
+                                    {{ language.name_local }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
                     
                     {% if request.user.is_authenticated %}
                     <form method="POST" action="{% url 'logout-page' %}">
