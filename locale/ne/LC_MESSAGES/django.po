@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-24 20:12+0545\n"
+"POT-Creation-Date: 2026-11-24 20:54+0545\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: accounts/templates/accounts/login.html:27
 msgid "Welcome Back!"
 msgstr "फेरि स्वागत छ!"
@@ -24,3 +25,31 @@ msgstr "फेरि स्वागत छ!"
 #: accounts/templates/accounts/login.html:31
 msgid "Please login to your account"
 msgstr "कृपया आफ्नो खातामा लग इन गर्नुहोस्।"
+
+#: accounts/templates/accounts/login.html:43
+msgid "Email Address"
+msgstr "इमेल ठेगाना"
+
+#: accounts/templates/accounts/login.html:63
+msgid "Password"
+msgstr "पासवर्ड"
+
+#: accounts/templates/accounts/login.html:116
+msgid "Forgot Password?"
+msgstr "पासवर्ड बिर्सनुभयो?"
+
+#: accounts/templates/accounts/login.html:127
+msgid "Login"
+msgstr "लग इन"
+
+#: accounts/templates/accounts/login.html:136
+msgid "Don't have an account?"
+msgstr "खाता छैन?"
+
+#: accounts/templates/accounts/login.html:140
+msgid "Sign Up"
+msgstr "साइन अप गर्नुहोस्"
+
+#: accounts/templates/accounts/login.html:149
+msgid "YAKHotel. All rights reserved."
+msgstr "YAKHotel। सर्वाधिकार सुरक्षित।"
