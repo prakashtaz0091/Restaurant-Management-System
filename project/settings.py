@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from decouple import config
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +30,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "core",
     "accounts",
+    
+    'background_task',
+    "django_celery_beat",
     
 ]
 
@@ -126,3 +130,21 @@ MEDIA_ROOT = "media"
 MEDIA_URL = "media/"
 
 KHALTI_SECRET_KEY = config('KHALTI_SECRET_KEY')
+
+
+# Celery
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+
+CELERY_TIMEZONE = "Asia/Kathmandu"
+
+CELERY_TASK_TRACK_STARTED = True
+
+# CELERY_BEAT_SCHEDULE = {
+#     "run-every-minute": {
+#         "task": "core.tasks.udpate_popular_menu_items",
+#         "schedule": 60.0,  # every 60 seconds
+#         "args": (),
+#     },
+# }
+
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

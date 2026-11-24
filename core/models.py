@@ -4,9 +4,10 @@ import uuid
 
 class MenuItem(models.Model):
     name = models.CharField(max_length=200)
-    price = models.DecimalField()
+    price = models.DecimalField(decimal_places=2, max_digits=10)
     description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="menu-items/", null=True)
+    is_popular = models.BooleanField(default=False)
     
     def __str__(self):
         return self.name
@@ -27,11 +28,10 @@ class Order(models.Model):
         SERVED = 's', 'Served'
     
     table = models.ForeignKey(Table, on_delete=models.PROTECT)
-    total = models.DecimalField()
+    total = models.DecimalField(decimal_places=2, max_digits=10)
     status = models.CharField(max_length=1, choices=StatusChoice, default=StatusChoice.PREPARING)
     
     created_at = models.DateTimeField(auto_now_add=True, null=True)
-    
     
     def __str__(self):
         return f"{self.table} - {self.status}"
@@ -40,7 +40,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     menuitem = models.ForeignKey(MenuItem, on_delete=models.PROTECT)
     quantity = models.IntegerField(default=1)
-    total = models.DecimalField()
+    total = models.DecimalField(decimal_places=2, max_digits=10)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
