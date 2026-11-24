@@ -1,5 +1,5 @@
-
 {% extends "base.html" %}
+{% load i18n %}
 {% block title %}Login | YAKHotel{% endblock title %}
 {% block content %}
 
@@ -24,11 +24,11 @@
             <!-- Heading -->
             <div class="text-center mb-8">
                 <h1 class="text-2xl font-bold text-gray-800">
-                    Welcome Back!
+                    {% translate "Welcome Back!" %}
                 </h1>
 
                 <p class="text-sm text-gray-500 mt-2">
-                    Please login to your account
+                    {% translate "Please login to your account" %}
                 </p>
             </div>
 
@@ -40,7 +40,7 @@
                 <!-- Email -->
                 <div>
                     <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Email Address
+                        {% translate "Email Address" %}
                     </label>
 
                     <input
@@ -60,7 +60,7 @@
                 <!-- Password -->
                 <div>
                     <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Password
+                        {% translate "Password" %}
                     </label>
 
                     <div class="relative">
@@ -113,7 +113,7 @@
                 <div class="flex justify-end">
                     <a href="{% url 'password_reset' %}"
                         class="text-sm font-medium text-blue-600 hover:text-blue-700 transition">
-                        Forgot Password?
+                        {% translate "Forgot Password?" %}
                     </a>
                 </div>
 
@@ -124,7 +124,7 @@
                     text-white font-semibold py-3 rounded-lg
                     transition duration-200 shadow-sm">
 
-                    Login
+                    {% translate "Login" %}
 
                 </button>
 
@@ -133,11 +133,11 @@
             <!-- Signup -->
             <div class="mt-8 text-center">
                 <p class="text-sm text-gray-500">
-                    Don't have an account?
+                    {% translate "Don't have an account?" %}
 
                     <a href="{% url 'signup-page' %}"
                         class="font-semibold text-blue-600 hover:text-blue-700 transition">
-                        Sign Up
+                        {% translate "Sign Up" %}
                     </a>
                 </p>
             </div>
@@ -146,7 +146,7 @@
 
         <!-- Footer -->
         <p class="text-center text-xs text-gray-400 mt-6">
-            &copy; {% now "Y" %} YAKHotel. All rights reserved.
+            &copy; {% now "Y" %} {% translate "YAKHotel. All rights reserved." %}
         </p>
 
     </div>
