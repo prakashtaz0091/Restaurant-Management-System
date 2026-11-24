@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import MenuItem, Order, OrderItem, Payment
+from .models import MenuItem, Order, OrderItem, Payment, Table
 import json
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
@@ -73,14 +73,23 @@ def order_view(request):
             'order_id':order.id
         })
     else:
-        table_id = request.session['table_id']
         # for order_id in request.session.get('order_ids'):
-        orders = Order.objects.filter(id__in=request.session.get('order_ids')).order_by('-created_at')
+        table_id = request.session.get('table_id')
+        if table_id is None:
+            tables = Table.objects.all()
+        else:
+            tables = []
+            
+        try:
+            orders = Order.objects.filter(id__in=request.session.get('order_ids')).order_by('-created_at')
+        except:
+            orders = []
         
         
         return render(request, "core/order-list.html", {
             'table_id':table_id,
-            'orders': orders
+            'orders': orders,
+            'tables': tables
         })
     
 

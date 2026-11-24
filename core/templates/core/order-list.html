@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block title %}Orders{% endblock title %}
 
@@ -6,6 +7,51 @@
 
 
 <section class="max-w-5xl mx-auto px-4 py-10">
+    {% if not table_id %}
+    <div id="tableModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
+
+            <h2 class="text-xl font-bold text-gray-900">
+                Select Your Table
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-2 mb-5">
+                Please select your table to view your orders.
+            </p>
+
+            <div class="grid grid-cols-4 gap-3">
+
+                {% for table in tables %}
+                <a href="{% url 'menu-page' table.id %}"
+                class="border border-gray-200 rounded-xl px-4 py-4
+                        text-center hover:border-blue-500 hover:bg-blue-50
+                        transition">
+
+                    <span class="block text-lg font-semibold text-gray-800">
+                        {{ table.name }}
+                    </span>
+
+                    {% if table.capacity %}
+                    <span class="block text-xs text-gray-500 mt-1">
+                        Capacity: {{ table.capacity }}
+                    </span>
+                    {% endif %}
+
+                </a>
+                {% empty %}
+                <p class="col-span-2 text-sm text-gray-500 text-center py-5">
+                    No tables available.
+                </p>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+
 
     <!-- Header -->
     <div class="mb-8">
@@ -40,7 +86,7 @@
                     </p>
 
                     <p class="text-sm font-medium text-gray-800 mt-1">
-                        {{ order.created_at|date:"M d, Y - h:i A" }}
+                        {{ order.created_at|naturaltime }}
                     </p>
                 </div>
 
