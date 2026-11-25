@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     
     'background_task',
     "django_celery_beat",
+    "rest_framework",
+    "drf_yasg",
     
 ]
 
@@ -164,3 +166,12 @@ LANGUAGES = [
 LOCALE_PATHS = [
     BASE_DIR / "locale",
 ]
+
+
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     "DEFAULT_PERMISSION_CLASSES": [
+#         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+#     ]
+# }
