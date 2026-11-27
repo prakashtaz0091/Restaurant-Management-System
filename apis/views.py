@@ -6,6 +6,8 @@ from .serializers import (
                         OrderModelSerializer
                     )
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
 
 
 class MenuItemModelViewset(viewsets.ModelViewSet):
@@ -20,3 +22,10 @@ class OrderCreateAPIView(views.APIView):
             order = serializer.save()
             return Response(OrderModelSerializer(order).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+    
+    
+class TableReserveAPIView(views.APIView):
+    permission_classes = [IsAuthenticated,]
+    
+    def post(self, request):
+        return Response({"message": "success"}, status=status.HTTP_200_OK) 
